@@ -1,5 +1,4 @@
-# bounded-mdl-residue-test
--
+
 
 README.md — Bounded Predictive‑MDL Residue Test (v1.0.0)
 
