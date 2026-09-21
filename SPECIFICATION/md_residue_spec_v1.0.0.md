@@ -727,3 +727,202 @@ All releases must be approved by the benchmark maintainers. Approval requires:
 - Zenodo archival  
 
 Unapproved releases must not be published.
+## 12. Compliance Requirements
+
+Compliance ensures that implementations behave consistently with the benchmark’s
+rules, constraints, and locked result format. Any implementation claiming
+compliance must satisfy all requirements in this section.
+
+### 12.1 Full Conformance
+An implementation is compliant only if it:
+
+- passes all validation suite tests  
+- produces correct compressed cores  
+- extracts residue accurately  
+- detects drift correctly  
+- respects all MDL bounds  
+- produces deterministic outputs  
+- conforms to the locked result format  
+
+Partial compliance is not recognized.
+
+### 12.2 Deterministic Behaviour
+All compliant implementations must be fully deterministic. Identical inputs must
+produce identical outputs across:
+
+- machines  
+- operating systems  
+- runtimes  
+- environments  
+
+Any non‑determinism is classified as drift.
+
+### 12.3 No Adaptive Tuning
+Implementations may not:
+
+- adjust MDL bounds dynamically  
+- tune entropy budgets  
+- modify predictive horizons  
+- alter inference depth limits  
+
+All bounds are fixed and invariant.
+
+### 12.4 No Retroactive Modification
+Implementations may not modify:
+
+- previous compressed cores  
+- residue signatures  
+- drift vectors  
+- alignment scores  
+- MDL traces  
+
+All states are locked once produced.
+
+### 12.5 Output Format Strictness
+Outputs must match the locked result format exactly. Deviations in:
+
+- key names  
+- ordering  
+- structure  
+- whitespace  
+- serialization  
+
+are considered non‑compliant.
+
+### 12.6 Test Vector Coverage
+Compliance requires correct behaviour on all test vectors:
+
+- structural  
+- semantic  
+- drift‑sensitive  
+
+Failure on any category results in non‑compliance.
+
+### 12.7 Compliance Report
+Implementations must produce a compliance report containing:
+
+- pass/fail status  
+- drift analysis  
+- alignment scores  
+- MDL trace summary  
+- residue signature summary  
+
+This report must be JSON‑serializable.
+
+
+## 13. Security & Integrity Requirements
+
+Security and integrity rules ensure that the benchmark cannot be gamed, bypassed,
+or manipulated.
+
+### 13.1 No Overfitting to Test Vectors
+Implementations may not hard‑code behaviours specific to test vectors. The
+validation suite includes checks to detect overfitting.
+
+### 13.2 No Hidden State
+Implementations must not maintain hidden state across evaluations. All state must
+be explicit and included in the locked result.
+
+### 13.3 No External Calls
+Implementations may not call external services, APIs, or models during evaluation.
+All computation must be local and deterministic.
+
+### 13.4 Integrity of Locked Results
+Locked results must:
+
+- be immutable  
+- include all required fields  
+- be complete  
+- be reproducible  
+
+Tampering or selective reporting is prohibited.
+
+### 13.5 Auditability
+All implementations must be auditable. This requires:
+
+- readable code  
+- clear documentation  
+- reproducible behaviour  
+- complete MDL traces  
+
+Opaque or obfuscated implementations are not permitted.
+
+
+## 14. Documentation Requirements
+
+Documentation ensures that implementations can be understood, audited, and
+maintained.
+
+### 14.1 Required Documentation
+Each implementation must include:
+
+- overview documentation  
+- MDL bound definitions  
+- residue extraction explanation  
+- drift detection explanation  
+- alignment logic explanation  
+- usage instructions  
+- version compatibility notes  
+
+### 14.2 Reference Implementation Documentation
+The Python and JavaScript reference implementations must include:
+
+- inline comments  
+- function‑level documentation  
+- examples using test vectors  
+- explanation of determinism guarantees  
+
+### 14.3 Validation Suite Documentation
+The validation suite must include:
+
+- instructions for running tests  
+- explanation of each test category  
+- expected outputs  
+- error interpretation guidance  
+
+### 14.4 Changelog Documentation
+All releases must include a changelog describing:
+
+- added features  
+- removed features  
+- fixes  
+- breaking changes  
+- version compatibility notes  
+
+### 14.5 Public Accessibility
+All documentation must be publicly accessible in the repository.
+
+
+## 15. Glossary
+
+This glossary defines key terms used throughout the specification.
+
+### 15.1 Compressed Core
+The minimal MDL‑constrained representation of the input.
+
+### 15.2 Residue
+The irreducible remainder left after compression.
+
+### 15.3 Drift
+Deviation from stable predictive behaviour across repeated runs.
+
+### 15.4 Contamination
+Introduction of artifacts not present in the input or compressed core.
+
+### 15.5 Predictive Horizon
+The maximum distance the model may extend inference beyond the compressed core.
+
+### 15.6 Entropy Budget
+The maximum randomness permitted during compression and prediction.
+
+### 15.7 Inference Depth Limit
+The maximum number of recursive inference steps permitted.
+
+### 15.8 Locked Result
+The immutable output package containing all evaluation artifacts.
+
+### 15.9 Stability Threshold
+The maximum allowed drift magnitude before a model is classified as unstable.
+
+### 15.10 MDL Trace
+A chronological record of compression behaviour under MDL constraints.
