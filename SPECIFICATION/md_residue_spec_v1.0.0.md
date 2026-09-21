@@ -194,3 +194,81 @@ The final output for each evaluation consists of:
 - Final bounded response  
 
 This output must conform to the locked result format defined in Section 7.
+## 6. Drift Detection & Stability Analysis
+
+Drift refers to any deviation from stable, bounded predictive behaviour. The 
+Bounded Predictive‑MDL Residue Test includes a formal drift‑detection mechanism 
+to identify instability, contamination, or divergence across repeated runs.
+
+### 6.1 Definition of Drift
+Drift occurs when the model’s output changes in ways that cannot be explained by 
+the MDL bounds, entropy budget, or predictive horizon. Drift is detected when:
+
+- residue magnitude changes unexpectedly  
+- residue type distribution shifts without cause  
+- structural traces diverge across identical inputs  
+- predictive alignment scores degrade  
+- new semantic structures appear that were not present in the compressed core  
+
+### 6.2 Drift Vector
+Each evaluation produces a drift vector representing the direction and magnitude 
+of deviation. The drift vector includes:
+
+- Δ residue magnitude  
+- Δ structural trace  
+- Δ semantic alignment  
+- Δ entropy usage  
+- Δ predictive horizon stability  
+
+A non‑zero drift vector indicates instability.
+
+### 6.3 Stability Threshold
+The benchmark defines a stability threshold. If the drift vector exceeds this 
+threshold, the model is classified as unstable for that evaluation. Thresholds 
+are fixed and cannot be tuned per model.
+
+### 6.4 Repeated Evaluation Requirement
+Models must undergo repeated evaluation using identical inputs and MDL bounds. 
+Stable models produce:
+
+- identical compressed cores  
+- identical residue signatures  
+- identical drift vectors (zero or near‑zero)  
+- identical alignment scores  
+
+Any divergence across runs is recorded as drift.
+
+### 6.5 Contamination Detection
+Contamination occurs when the model introduces artifacts not present in the 
+input or compressed core. Contamination is detected when:
+
+- new semantic elements appear  
+- hallucinated structures emerge  
+- entropy usage spikes  
+- residue signatures contain foreign patterns  
+
+Contamination is treated as a severe form of drift.
+
+### 6.6 Drift Severity Levels
+Drift is classified into three severity levels:
+
+#### Level 1 — Minor Drift
+Small deviations within acceptable tolerance. Model remains usable.
+
+#### Level 2 — Moderate Drift
+Significant deviations indicating instability. Model requires further analysis.
+
+#### Level 3 — Severe Drift
+Major deviations, contamination, or hallucination. Model fails the benchmark.
+
+### 6.7 Stability Report
+Each evaluation produces a stability report containing:
+
+- drift vector  
+- severity level  
+- contamination indicators  
+- entropy usage summary  
+- predictive alignment score  
+- stability classification  
+
+This report is included in the final locked output.
