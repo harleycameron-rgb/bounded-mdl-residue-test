@@ -1,0 +1,43 @@
+{
+  "test_vectors": [
+    {
+      "input_id": "structural_001",
+      "category": "structural",
+      "description": "Strong syntactic repetition to test structural residue extraction.",
+      "expected_core_properties": {
+        "structure": "repetitive-pattern",
+        "compression_behavior": "high structural reducibility"
+      },
+      "expected_residue_properties": {
+        "types": ["structural"],
+        "magnitude_behavior": "low residue expected"
+      }
+    },
+    {
+      "input_id": "semantic_001",
+      "category": "semantic",
+      "description": "Meaning-bearing sentence to test semantic residue and alignment.",
+      "expected_core_properties": {
+        "structure": "natural-language",
+        "compression_behavior": "moderate reducibility"
+      },
+      "expected_residue_properties": {
+        "types": ["semantic"],
+        "magnitude_behavior": "medium residue expected"
+      }
+    },
+    {
+      "input_id": "drift_sensitive_001",
+      "category": "drift-sensitive",
+      "description": "Input designed to reveal drift across repeated evaluations.",
+      "expected_core_properties": {
+        "structure": "instructional-text",
+        "compression_behavior": "stable reducibility"
+      },
+      "expected_residue_properties": {
+        "types": ["drift"],
+        "magnitude_behavior": "should remain stable across runs"
+      }
+    }
+  ]
+}
