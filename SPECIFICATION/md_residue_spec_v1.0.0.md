@@ -272,3 +272,91 @@ Each evaluation produces a stability report containing:
 - stability classification  
 
 This report is included in the final locked output.
+## 7. Locked Result Format
+
+All benchmark outputs must conform to a strict locked format to ensure 
+reproducibility, comparability, and auditability. The locked result format 
+prevents post‑hoc modification, adaptive tuning, or selective reporting.
+
+Each evaluation produces a single result package containing the following 
+components.
+
+### 7.1 Compressed Core
+A JSON object representing the minimal MDL‑constrained representation of the 
+input. It must include:
+
+- `core_structure`: structural representation  
+- `core_length`: description length  
+- `entropy_usage`: entropy consumed during compression  
+- `horizon`: predictive horizon used  
+- `depth`: inference depth reached  
+
+The compressed core is immutable once produced.
+
+### 7.2 Residue Signature
+A structured record describing the irreducible remainder. It must include:
+
+- `residue_magnitude`  
+- `residue_types`: list of structural, semantic, epistemic, drift, contamination  
+- `structural_trace`: irreducible syntactic patterns  
+- `alignment_score`: predictive alignment with the compressed core  
+- `drift_vector`: if present  
+
+Residue signatures must follow the taxonomy defined in Section 3.
+
+### 7.3 MDL Trace
+A chronological record of the compression process, including:
+
+- step‑by‑step description length changes  
+- entropy usage at each step  
+- horizon and depth transitions  
+- bound checks and constraint validations  
+
+The MDL trace must be complete and unaltered.
+
+### 7.4 Predictive Alignment Report
+A formal report evaluating whether the model’s response aligns with the 
+compressed core. It must include:
+
+- alignment score  
+- violations detected  
+- entropy deviations  
+- horizon overruns  
+- depth limit checks  
+
+Any misalignment must be explicitly recorded.
+
+### 7.5 Drift Analysis
+A structured analysis of drift behaviour, including:
+
+- drift vector  
+- severity level  
+- contamination indicators  
+- stability threshold comparison  
+- repeated‑run divergence  
+
+Drift analysis must follow the rules defined in Section 6.
+
+### 7.6 Final Bounded Response
+The model’s final response, generated under MDL constraints. It must:
+
+- align with the compressed core  
+- preserve residue  
+- avoid drift  
+- respect entropy limits  
+- remain within the predictive horizon  
+
+The final response is locked and cannot be modified.
+
+### 7.7 Packaging Requirements
+All components must be packaged into a single JSON or JSONL file with the 
+following top‑level keys:
+
+- `compressed_core`  
+- `residue_signature`  
+- `mdl_trace`  
+- `alignment_report`  
+- `drift_analysis`  
+- `bounded_response`  
+
+This file constitutes the official locked result for the evaluation.
