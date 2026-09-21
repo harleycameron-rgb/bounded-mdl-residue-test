@@ -360,3 +360,81 @@ following top‑level keys:
 - `bounded_response`  
 
 This file constitutes the official locked result for the evaluation.
+## 8. Test Vector Requirements
+
+Test vectors are the public, preregistered input samples used to validate 
+implementations of the Bounded Predictive‑MDL Residue Test. They ensure that 
+all models are evaluated using identical, reproducible inputs.
+
+### 8.1 Purpose of Test Vectors
+Test vectors serve three functions:
+
+1. Provide standardized inputs for cross‑model comparison  
+2. Enable independent verification of benchmark behaviour  
+3. Ensure that residue extraction and drift detection operate consistently  
+
+Test vectors must be publicly accessible and included in the repository.
+
+### 8.2 Structure of Test Vectors
+Each test vector consists of:
+
+- `input_id`: unique identifier  
+- `input_text`: the raw input sample  
+- `expected_core_properties`: high‑level expectations for the compressed core  
+- `expected_residue_properties`: high‑level expectations for residue  
+- `notes`: optional clarifications  
+
+These expectations do not include locked results; they only define the 
+structural behaviour the model should exhibit.
+
+### 8.3 Types of Test Vectors
+The benchmark requires at least three categories of test vectors:
+
+#### 8.3.1 Structural Inputs
+Inputs with strong syntactic patterns designed to test structural residue 
+extraction.
+
+#### 8.3.2 Semantic Inputs
+Meaning‑bearing inputs designed to test semantic residue and predictive 
+alignment.
+
+#### 8.3.3 Drift‑Sensitive Inputs
+Inputs engineered to reveal drift, contamination, or instability across 
+repeated runs.
+
+### 8.4 Format Requirements
+Test vectors must be stored as plain text files in:
+
+    TEST_VECTORS/inputs/
+
+Metadata for each test vector must be stored in:
+
+    TEST_VECTORS/metadata.json
+
+Metadata must include:
+
+- `input_id`  
+- `category`  
+- `description`  
+- `expected_core_properties`  
+- `expected_residue_properties`  
+
+### 8.5 Versioning
+Test vectors are versioned independently from the benchmark specification. 
+Changes to test vectors require:
+
+- a new version tag  
+- updated metadata  
+- a changelog entry  
+- a new release  
+
+Test vectors must never be altered retroactively.
+
+### 8.6 Public Availability
+All test vectors must remain publicly accessible to ensure transparency and 
+independent verification. Locked results, however, must not be included in the 
+repository.
+
+### 8.7 Compliance Requirement
+Any implementation of the benchmark must demonstrate correct behaviour on all 
+test vectors to be considered compliant.
