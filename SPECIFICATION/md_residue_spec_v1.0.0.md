@@ -82,3 +82,41 @@ Each evaluation produces a residue signature consisting of:
 - drift vector (if present)
 
 Residue signatures are used for cross‑model comparison and stability analysis.
+## 4. Predictive Alignment Rules
+
+Predictive alignment ensures that the model’s output remains consistent with the 
+compressed core and does not introduce drift, contamination, or unbounded 
+inference. All responses generated during evaluation must satisfy the following 
+constraints.
+
+### 4.1 Core Alignment
+The model’s response must align strictly with the Compressed_Core produced during 
+the MDL compression step. No new structural or semantic elements may be introduced 
+that exceed the predictive horizon.
+
+### 4.2 Residue Preservation
+The model must not attempt to reinterpret, erase, or overwrite residue. Residue is 
+a diagnostic signal and must remain intact for analysis.
+
+### 4.3 Drift Prevention
+The model must avoid generating content that:
+- extends beyond the inference depth limit  
+- increases entropy beyond the allowed budget  
+- introduces new, unanchored semantic structures  
+- contradicts the compressed core  
+
+Any such behaviour is classified as drift.
+
+### 4.4 Entropy-Constrained Prediction
+All predictive behaviour must remain within the entropy budget. The model may not 
+use randomness, stochastic elaboration, or speculative inference that violates the 
+budget.
+
+### 4.5 No Retroactive Reinterpretation
+The model may not reinterpret or modify previous turns, compressed cores, or 
+residue signatures. All prior states are locked once produced.
+
+### 4.6 Stability Requirement
+The model’s response must be stable under repeated evaluation. Identical inputs 
+under identical bounds must produce identical compressed cores and residue 
+signatures.
