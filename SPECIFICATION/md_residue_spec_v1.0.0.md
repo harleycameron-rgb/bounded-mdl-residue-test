@@ -633,3 +633,97 @@ The validation suite is versioned independently. Any change requires:
 - a new release  
 
 Retroactive modification is not permitted.
+## 11. Versioning & Release Rules
+
+The Bounded Predictive‑MDL Residue Test follows strict versioning and release 
+rules to ensure reproducibility, transparency, and long‑term stability. All 
+changes to the specification, reference implementations, test vectors, or 
+validation suite must follow the procedures defined in this section.
+
+### 11.1 Semantic Versioning
+The benchmark uses semantic versioning:
+
+    MAJOR.MINOR.PATCH
+
+- MAJOR: breaking changes to the specification or locked result format  
+- MINOR: new features, new test vectors, or new validation rules  
+- PATCH: corrections, clarifications, or non‑breaking updates  
+
+Version numbers must be incremented consistently across all components.
+
+### 11.2 Release Artifacts
+Each release must include:
+
+- the full specification  
+- reference implementations (Python + JavaScript)  
+- test vectors and metadata  
+- validation suite  
+- compliance report template  
+- changelog  
+
+All artifacts must be included in the GitHub release.
+
+### 11.3 Changelog Requirements
+Every release must include a changelog entry describing:
+
+- what changed  
+- why it changed  
+- which components were affected  
+- whether the change is breaking or non‑breaking  
+
+Changelog entries must be clear, concise, and complete.
+
+### 11.4 Retroactive Modification Prohibited
+No component of the benchmark may be modified retroactively. This includes:
+
+- specification text  
+- test vectors  
+- reference implementations  
+- validation suite  
+- locked results  
+- metadata  
+
+Any change requires a new version and a new release.
+
+### 11.5 Zenodo Archival Requirement
+All releases must be archived in Zenodo to ensure long‑term preservation. Each 
+release must include:
+
+- DOI  
+- release artifacts  
+- metadata  
+- license information  
+
+Zenodo DOIs must be referenced in the README.
+
+### 11.6 Locked Results
+Locked results must never be stored in the repository. They must be uploaded 
+separately to Zenodo as sealed artifacts. Locked results are immutable and 
+cannot be altered once published.
+
+### 11.7 Cross‑Version Compatibility
+Implementations must specify which version of the benchmark they target. 
+Compatibility across versions is not guaranteed. Validation must be performed 
+against the exact version declared.
+
+### 11.8 Deprecation Policy
+Components may be deprecated only in MINOR or MAJOR releases. Deprecation 
+requires:
+
+- clear documentation  
+- migration guidance  
+- updated validation rules  
+- updated test vector metadata  
+
+Deprecated components must remain available for at least one full version cycle.
+
+### 11.9 Release Governance
+All releases must be approved by the benchmark maintainers. Approval requires:
+
+- complete artifacts  
+- passing validation suite  
+- updated documentation  
+- updated changelog  
+- Zenodo archival  
+
+Unapproved releases must not be published.
