@@ -534,3 +534,102 @@ Any change requires:
 - a new release  
 
 Retroactive modification is not permitted.
+## 10. Validation Suite Requirements
+
+The validation suite ensures that any implementation of the Bounded 
+Predictive‑MDL Residue Test behaves correctly on all test vectors and 
+produces outputs that conform to the locked result format. The suite is 
+implemented in:
+
+    VALIDATION_SUITE/run_tests.py
+
+This section defines the required behaviour of the validation suite.
+
+### 10.1 Purpose
+The validation suite serves four critical functions:
+
+1. Verify correct MDL compression behaviour  
+2. Confirm accurate residue extraction and classification  
+3. Detect drift, contamination, and instability  
+4. Ensure strict adherence to the locked result format  
+
+Any implementation that fails validation is considered non‑compliant.
+
+### 10.2 Required Test Categories
+The validation suite must include tests for:
+
+#### 10.2.1 Structural Tests
+Verify correct handling of syntactic patterns and structural residue.
+
+#### 10.2.2 Semantic Tests
+Verify correct extraction of meaning‑bearing residue and alignment behaviour.
+
+#### 10.2.3 Drift Tests
+Detect instability across repeated runs using drift‑sensitive inputs.
+
+#### 10.2.4 Format Tests
+Ensure that all outputs match the locked result format defined in Section 7.
+
+### 10.3 Required Functions in run_tests.py
+The validation suite must implement the following functions:
+
+#### 10.3.1 `load_test_vectors()`
+Loads all test vectors and associated metadata from:
+
+    TEST_VECTORS/inputs/
+    TEST_VECTORS/metadata.json
+
+#### 10.3.2 `run_compression_tests(impl)`
+Validates that `impl.compress()` produces a correct Compressed_Core.
+
+#### 10.3.3 `run_residue_tests(impl)`
+Validates that `impl.extract_residue()` produces correct residue signatures.
+
+#### 10.3.4 `run_alignment_tests(impl)`
+Validates predictive alignment behaviour and checks for violations.
+
+#### 10.3.5 `run_drift_tests(impl)`
+Runs repeated evaluations to detect drift, contamination, or instability.
+
+#### 10.3.6 `run_format_tests(impl)`
+Ensures that all outputs conform to the locked result format.
+
+#### 10.3.7 `run_all_tests(impl)`
+Runs the full validation suite and produces a compliance report.
+
+### 10.4 Determinism Requirement
+The validation suite must enforce determinism. Any non‑deterministic behaviour 
+is classified as drift and results in failure.
+
+### 10.5 Error Handling
+The suite must raise standardized errors for:
+
+- MDL bound violations  
+- entropy budget overruns  
+- horizon or depth limit violations  
+- format mismatches  
+- drift or contamination detection  
+
+Errors must be descriptive and reproducible.
+
+### 10.6 Compliance Report
+The validation suite must produce a final compliance report containing:
+
+- pass/fail status for each test category  
+- detailed error messages  
+- drift vectors and severity levels  
+- alignment scores  
+- format compliance results  
+- overall compliance classification  
+
+This report must be JSON‑serializable and included in the release artifacts.
+
+### 10.7 Versioning
+The validation suite is versioned independently. Any change requires:
+
+- a new version tag  
+- updated documentation  
+- updated test vector metadata  
+- a new release  
+
+Retroactive modification is not permitted.
