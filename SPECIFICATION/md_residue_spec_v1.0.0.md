@@ -120,3 +120,77 @@ residue signatures. All prior states are locked once produced.
 The model’s response must be stable under repeated evaluation. Identical inputs 
 under identical bounds must produce identical compressed cores and residue 
 signatures.
+## 5. Evaluation Procedure
+
+This section defines the step‑by‑step process required to run the Bounded 
+Predictive‑MDL Residue Test. All evaluations must follow this procedure exactly 
+to ensure reproducibility and comparability across models and systems.
+
+### 5.1 Input Acquisition
+The model receives a preregistered input sample. Inputs may not be altered, 
+expanded, filtered, or preprocessed beyond the minimal normalization specified 
+in the reference implementation.
+
+### 5.2 MDL Compression Step
+The model attempts to compress the input under the fixed MDL bounds. The output 
+of this step is the Compressed_Core, which must satisfy:
+
+- complexity ceiling  
+- entropy budget  
+- predictive horizon  
+- inference depth limit  
+
+The Compressed_Core is locked once produced.
+
+### 5.3 Residue Extraction
+Residue is computed as:
+
+    Residue = Input − Compressed_Core
+
+The model must classify the residue according to the taxonomy defined in 
+Section 3. Residue signatures must include:
+
+- residue magnitude  
+- residue type distribution  
+- structural trace  
+- predictive alignment score  
+- drift vector (if present)
+
+### 5.4 Predictive Alignment Check
+The model evaluates whether its intended response aligns with the Compressed_Core 
+and respects all MDL constraints. If misalignment is detected, the model must 
+correct its response before proceeding.
+
+### 5.5 Response Generation
+The model generates a bounded response that:
+
+- aligns with the Compressed_Core  
+- preserves residue  
+- avoids drift  
+- respects entropy constraints  
+- remains within the predictive horizon  
+
+The response is locked once produced.
+
+### 5.6 State Update
+The evaluation state is updated with:
+
+- compressed core  
+- residue signature  
+- alignment score  
+- drift vector  
+- stability indicators  
+
+No retroactive modification of previous states is permitted.
+
+### 5.7 Output Packaging
+The final output for each evaluation consists of:
+
+- Compressed_Core  
+- Residue signature  
+- MDL trace  
+- Predictive alignment report  
+- Drift analysis  
+- Final bounded response  
+
+This output must conform to the locked result format defined in Section 7.
