@@ -1,0 +1,1 @@
+Repeatable evaluation is required to detect drift. Any deviation across identical runs indicates instability.
