@@ -438,3 +438,99 @@ repository.
 ### 8.7 Compliance Requirement
 Any implementation of the benchmark must demonstrate correct behaviour on all 
 test vectors to be considered compliant.
+## 9. Reference Implementation Requirements
+
+The reference implementation provides a minimal, transparent, and reproducible 
+baseline for running the Bounded Predictive‑MDL Residue Test. It is not intended 
+to be optimized; instead, it defines the canonical behaviour that all compliant 
+implementations must match.
+
+Two reference implementations are required:
+
+- Python module: REFERENCE_IMPLEMENTATION/core.py  
+- JavaScript module: REFERENCE_IMPLEMENTATION/core.js  
+
+Both must follow the rules defined in this section.
+
+### 9.1 Purpose
+The reference implementation serves four functions:
+
+1. Demonstrate correct handling of MDL bounds  
+2. Provide a canonical method for extracting residue  
+3. Define the structure of the compressed core  
+4. Provide a baseline for drift detection and stability analysis  
+
+All third‑party implementations must match the behaviour of the reference 
+implementation on all test vectors.
+
+### 9.2 Required Functions
+Both the Python and JavaScript modules must implement the following functions:
+
+#### 9.2.1 `compress(input_text)`
+Produces the Compressed_Core under fixed MDL constraints. Must return:
+
+- `core_structure`  
+- `core_length`  
+- `entropy_usage`  
+- `horizon`  
+- `depth`  
+
+#### 9.2.2 `extract_residue(input_text, compressed_core)`
+Computes the irreducible remainder. Must return:
+
+- `residue_magnitude`  
+- `residue_types`  
+- `structural_trace`  
+- `alignment_score`  
+- `drift_vector`  
+
+#### 9.2.3 `check_alignment(compressed_core, residue)`
+Evaluates predictive alignment and returns:
+
+- `alignment_score`  
+- `violations`  
+- `entropy_deviation`  
+- `horizon_overrun`  
+- `depth_limit_check`  
+
+#### 9.2.4 `generate_bounded_response(compressed_core, residue)`
+Produces the final bounded response under MDL constraints.
+
+### 9.3 Determinism Requirement
+Both reference implementations must be fully deterministic. Identical inputs 
+must produce identical outputs across all environments. No randomness, 
+stochastic behaviour, or adaptive tuning is permitted.
+
+### 9.4 Bound Enforcement
+The reference implementation must enforce:
+
+- complexity ceiling  
+- entropy budget  
+- predictive horizon  
+- inference depth limit  
+
+Any violation must raise a standardized error.
+
+### 9.5 Output Format
+All functions must return JSON‑serializable objects matching the locked result 
+format defined in Section 7.
+
+### 9.6 Cross‑Language Consistency
+The Python and JavaScript implementations must produce identical outputs for 
+all test vectors. Differences in formatting, whitespace, or ordering are not 
+permitted.
+
+### 9.7 Minimal Dependencies
+Reference implementations must use minimal external dependencies to ensure 
+portability and reproducibility. Only standard library modules may be used.
+
+### 9.8 Versioning
+Reference implementations are versioned independently from the specification. 
+Any change requires:
+
+- a new version tag  
+- updated documentation  
+- updated test vector metadata  
+- a new release  
+
+Retroactive modification is not permitted.
