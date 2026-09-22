@@ -63,7 +63,7 @@ def run_unified(
     """
 
     pipeline_output = pipeline_fn(text)
-    drift_analysis = drift_fn(text)
+    drift_analysis = drift_fn(pipeline_output, pipeline_output)
     harmonized = harmonizer_fn(pipeline_output)
     alignment_verdict = audit_fn(pipeline_output)
     stability_envelope = envelope_fn(

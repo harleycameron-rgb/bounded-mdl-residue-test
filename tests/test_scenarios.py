@@ -1,0 +1,33 @@
+import unittest
+
+from analysis.reporter import generate_report
+from analysis.visualizer import render_network_text
+from multi_agent.agent import AgentNode
+from multi_agent.network import AgentNetwork
+from tests.helpers import make_output
+
+
+class ScenarioTests(unittest.TestCase):
+    def test_aligned_agents_report_consensus(self):
+        agents = [
+            AgentNode("alpha", evaluator=lambda prompt: make_output(prompt, aligned=True, drift_magnitude=0)),
+            AgentNode("beta", evaluator=lambda prompt: make_output(prompt, aligned=True, drift_magnitude=0)),
+        ]
+        network = AgentNetwork.from_chain(agents)
+        network.run("stable prompt", rounds=1)
+        report = generate_report(network)
+        self.assertTrue(report["alignment"]["consensus"])
+        self.assertEqual(report["metrics"]["coherence"], 1.0)
+
+    def test_diverging_agents_raise_divergence_score(self):
+        alpha = AgentNode("alpha", evaluator=lambda prompt: make_output(prompt, aligned=True, drift_magnitude=0))
+        beta = AgentNode("beta", evaluator=lambda prompt: make_output(prompt, aligned=False, drift_magnitude=2))
+        network = AgentNetwork.from_chain([alpha, beta])
+        network.run("divergent prompt", rounds=2)
+        report = generate_report(network)
+        self.assertGreater(report["alignment"]["divergence_score"], 0.0)
+        self.assertIn("alpha -> beta", render_network_text(network))
+
+
+if __name__ == "__main__":
+    unittest.main()
