@@ -17,6 +17,7 @@ class NetworkTests(unittest.TestCase):
         self.assertNotIn("[network_context]", network.round_history[0]["b"].prompt)
         self.assertIn("[network_context]", network.round_history[1]["b"].prompt)
         self.assertEqual(len(network.message_history), 2)
+        self.assertEqual([len(messages) for messages in network.message_history], [1, 1])
 
     def test_graph_construction_preserves_edges(self):
         agents = [AgentNode(name, evaluator=lambda prompt: make_output(prompt)) for name in ("a", "b", "c")]
@@ -48,6 +49,7 @@ class NetworkTests(unittest.TestCase):
         self.assertEqual(len(network.round_history), 1)
         self.assertEqual(network.round_history[0]["a"].prompt, "second prompt")
         self.assertEqual(len(network.message_history), 1)
+        self.assertEqual(len(network.message_history[0]), 1)
 
 
 if __name__ == "__main__":

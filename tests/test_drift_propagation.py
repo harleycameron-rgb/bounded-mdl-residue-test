@@ -43,6 +43,7 @@ class DriftPropagationTests(unittest.TestCase):
         transfer = track_pair(source, target)
         self.assertEqual(pair["propagation_effect"], "amplified")
         self.assertEqual(transfer["transfer_effect"], "amplified")
+        self.assertEqual(transfer["residue_change"], 1.0)
 
     def test_network_analysis_uses_previous_round_edges(self):
         agent_a = AgentNode("a", evaluator=lambda prompt: make_output(prompt, drift_magnitude=1))
