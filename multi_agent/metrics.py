@@ -4,6 +4,7 @@ from itertools import combinations
 from typing import Dict
 
 from .agent import StateVector
+from .drift_propagation import normalize_drift_gap
 
 
 def compatibility_score(left: StateVector, right: StateVector) -> float:
@@ -14,13 +15,14 @@ def compatibility_score(left: StateVector, right: StateVector) -> float:
     left_mdl = float(left["mdl_score"].get("mdl_score", 0.0))
     right_mdl = float(right["mdl_score"].get("mdl_score", 0.0))
     drift_gap = abs(float(left["drift_magnitude"]) - float(right["drift_magnitude"]))
+    normalized_drift_gap = normalize_drift_gap(drift_gap)
 
     raw_score = (
         left_alignment
         + right_alignment
         + ((left_stability + right_stability) / 2.0)
         + (1.0 - min(1.0, abs(left_mdl - right_mdl)))
-        + (1.0 - min(1.0, drift_gap))
+        + (1.0 - normalized_drift_gap)
     ) / 5.0
     return round(raw_score, 4)
 

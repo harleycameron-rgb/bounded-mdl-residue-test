@@ -32,7 +32,7 @@ class DriftPropagationTests(unittest.TestCase):
             },
         )
         self.assertGreater(distance["distance"], 0)
-        self.assertEqual(distance["component_distances"]["drift_magnitude"], 2.0)
+        self.assertAlmostEqual(distance["component_distances"]["drift_magnitude"], 2.0 / 3.0)
 
     def test_pair_analysis_classifies_amplification(self):
         agent_a = AgentNode("a", evaluator=lambda prompt: make_output(prompt, drift_magnitude=0))

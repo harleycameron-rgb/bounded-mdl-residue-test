@@ -26,6 +26,17 @@ class ScenarioTests(unittest.TestCase):
         network.run("divergent prompt", rounds=2)
         report = generate_report(network)
         self.assertGreater(report["alignment"]["divergence_score"], 0.0)
+        self.assertEqual(
+            report["alignment"]["disagreements"],
+            [
+                {
+                    "left": "alpha",
+                    "right": "beta",
+                    "left_aligned": True,
+                    "right_aligned": False,
+                }
+            ],
+        )
         self.assertIn("alpha -> beta", render_network_text(network))
 
 

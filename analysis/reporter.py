@@ -9,6 +9,15 @@ from multi_agent.network import AgentNetwork
 from multi_agent.residue_transfer import analyze_network as analyze_residue_network
 
 
+def _resolve_round_index(round_index: int, total_rounds: int) -> int:
+    return round_index if round_index >= 0 else total_rounds + round_index
+
+
+def _scope_records(records, round_index: int, total_rounds: int):
+    resolved_round = _resolve_round_index(round_index, total_rounds)
+    return [record for record in records if record["target_round"] == resolved_round]
+
+
 def generate_report(network: AgentNetwork, round_index: int = -1) -> Dict[str, object]:
     if not network.round_history:
         return {
@@ -22,11 +31,13 @@ def generate_report(network: AgentNetwork, round_index: int = -1) -> Dict[str, o
 
     snapshots = network.round_history[round_index]
     states = snapshots_to_states(snapshots)
+    drift_records = analyze_drift_network(network)
+    residue_records = analyze_residue_network(network)
     return {
         "agent_count": len(network.agents),
         "rounds": len(network.round_history),
         "metrics": summarize(states),
         "alignment": detect_divergence(states),
-        "drift": analyze_drift_network(network),
-        "residue": analyze_residue_network(network),
+        "drift": _scope_records(drift_records, round_index, len(network.round_history)),
+        "residue": _scope_records(residue_records, round_index, len(network.round_history)),
     }

@@ -11,7 +11,12 @@ def _stable(value: object) -> str:
     return json.dumps(value, sort_keys=True, default=str)
 
 
+def normalize_drift_gap(gap: float) -> float:
+    return gap / (1.0 + gap)
+
+
 def state_vector_distance(left: StateVector, right: StateVector) -> Dict[str, object]:
+    drift_gap = abs(float(left["drift_magnitude"]) - float(right["drift_magnitude"]))
     components = {
         "core_signature": 0.0 if left["core_signature"] == right["core_signature"] else 1.0,
         "residue_signature": 0.0 if _stable(left["residue_signature"]) == _stable(right["residue_signature"]) else 1.0,
@@ -19,7 +24,7 @@ def state_vector_distance(left: StateVector, right: StateVector) -> Dict[str, ob
         "harmonized_response": 0.0 if _stable(left["harmonized_response"]) == _stable(right["harmonized_response"]) else 1.0,
         "stability_envelope": 0.0 if _stable(left["stability_envelope"]) == _stable(right["stability_envelope"]) else 1.0,
         "mdl_score": 0.0 if _stable(left["mdl_score"]) == _stable(right["mdl_score"]) else 1.0,
-        "drift_magnitude": abs(float(left["drift_magnitude"]) - float(right["drift_magnitude"])),
+        "drift_magnitude": normalize_drift_gap(drift_gap),
     }
     normalized = sum(components.values()) / len(components)
     return {"component_distances": components, "distance": normalized}
