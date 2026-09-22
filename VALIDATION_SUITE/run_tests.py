@@ -13,6 +13,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 import REFERENCE_IMPLEMENTATION.core as impl
+from REFERENCE_IMPLEMENTATION.alignment_auditor import run_alignment_audit
 
 
 def resolve_test_vector_paths():
@@ -111,12 +112,11 @@ def run_alignment_tests():
     vectors = load_test_vectors()
 
     for v in vectors:
-        core = impl.compress_text(v["text"])
-        residue = impl.extract_residue(v["text"])
-        alignment = impl.alignment_report(core["signature"], residue)
+        pipeline_output = impl.run_pipeline(v["text"])
+        alignment = run_alignment_audit(pipeline_output)
         results.append({
             "id": v["id"],
-            "alignment_report": alignment
+            "alignment": alignment
         })
 
     return results
