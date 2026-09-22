@@ -31,12 +31,13 @@ def build_prompt(base_prompt: str, inbound_messages: Iterable[MessageEnvelope]) 
 def emit_messages(
     snapshot: AgentSnapshot,
     targets: Iterable[str],
+    delivery_round: int,
 ) -> List[MessageEnvelope]:
     return [
         MessageEnvelope(
             source=snapshot.agent_name,
             target=target,
-            round_index=snapshot.round_index,
+            round_index=delivery_round,
             prompt=snapshot.prompt,
             response=snapshot.response,
             state_vector=snapshot.state_vector,

@@ -37,7 +37,7 @@ class AgentNetwork:
 
     def run_round(self, prompt: str) -> Dict[str, AgentSnapshot]:
         round_index = len(self.round_history)
-        previous_messages = self.messages_for_round(round_index - 1) if round_index > 0 else []
+        previous_messages = self.messages_for_round(round_index)
         snapshots: Dict[str, AgentSnapshot] = {}
 
         for agent_name, agent in self.agents.items():
@@ -46,7 +46,9 @@ class AgentNetwork:
             snapshots[agent_name] = agent.process(composed_prompt, round_index)
 
         for source, targets in self.edges.items():
-            self.message_history.extend(emit_messages(snapshots[source], targets))
+            self.message_history.extend(
+                emit_messages(snapshots[source], targets, delivery_round=round_index + 1)
+            )
 
         self.round_history.append(snapshots)
         return snapshots
