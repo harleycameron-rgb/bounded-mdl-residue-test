@@ -2,7 +2,8 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from VALIDATION_SUITE.run_tests import make_json_safe, resolve_test_vector_paths
+import REFERENCE_IMPLEMENTATION.core as impl
+from VALIDATION_SUITE.run_tests import make_json_safe, resolve_test_vector_paths, run_compression_tests
 
 
 class ValidationSuiteHelpersTest(unittest.TestCase):
@@ -61,6 +62,24 @@ class ValidationSuiteHelpersTest(unittest.TestCase):
                 with patch.object(Path, "exists", autospec=True, return_value=False):
                     with self.assertRaises(FileNotFoundError):
                         resolve_test_vector_paths()
+
+    def test_run_compression_tests_returns_json_friendly_summary(self):
+        vectors = [{"id": "sample", "text": "abc", "category": "test", "meta": {}}]
+
+        with patch("VALIDATION_SUITE.run_tests.load_test_vectors", return_value=vectors):
+            results = run_compression_tests()
+
+        core = impl.compress_text("abc")
+        self.assertEqual(
+            results,
+            [{
+                "id": "sample",
+                "compressed_core": {
+                    "signature": core["signature"],
+                    "compressed_size": len(core["compressed_bytes"]),
+                },
+            }],
+        )
 
 
 if __name__ == "__main__":

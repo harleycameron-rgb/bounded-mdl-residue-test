@@ -5,7 +5,7 @@
 
 try:
     from .core import run_pipeline
-    from .drift import analyze_drift
+    from .drift import analyze_pipeline_drift
     from .bounded_response import run_harmonized
     from .alignment_auditor import run_alignment_audit
     from .stability_envelope import run_stability_envelope
@@ -13,7 +13,7 @@ try:
     from .unified_output import run_unified
 except ImportError:
     from core import run_pipeline
-    from drift import analyze_drift
+    from drift import analyze_pipeline_drift
     from bounded_response import run_harmonized
     from alignment_auditor import run_alignment_audit
     from stability_envelope import run_stability_envelope
@@ -28,17 +28,16 @@ def run_benchmark(text):
     Execute the full MDL benchmark pipeline and return unified output.
     """
     first_output = run_pipeline(text)
-    second_output = run_pipeline(text)
+    drift_analysis = analyze_pipeline_drift(first_output, run_pipeline(text))
 
     return run_unified(
         text,
-        drift_fn=analyze_drift,
         harmonizer_fn=run_harmonized,
         audit_fn=run_alignment_audit,
         envelope_fn=run_stability_envelope,
         score_fn=run_mdl_score,
         pipeline_output=first_output,
-        second_pipeline_output=second_output,
+        drift_analysis=drift_analysis,
     )
 
 

@@ -35,7 +35,7 @@ def compress_text(text):
 # ------------------------------------------------------------
 # Residue Extraction
 # ------------------------------------------------------------
-def extract_residue(text):
+def extract_residue(text, core=None):
     """
     Extract residue as a simple deterministic placeholder:
     - length

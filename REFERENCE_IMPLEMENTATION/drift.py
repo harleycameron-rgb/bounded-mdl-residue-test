@@ -63,7 +63,7 @@ def is_stable(drift_vector):
 # ------------------------------------------------------------
 # Full Drift Analysis
 # ------------------------------------------------------------
-def analyze_drift(first_output, second_output):
+def analyze_pipeline_drift(first_output, second_output):
     """
     Produce a full drift analysis block.
     """
@@ -76,3 +76,10 @@ def analyze_drift(first_output, second_output):
         "drift_magnitude": magnitude,
         "stable": stable
     }
+
+
+def analyze_drift(text, pipeline_fn):
+    """
+    Produce a full drift analysis block from repeated pipeline execution.
+    """
+    return analyze_pipeline_drift(pipeline_fn(text), pipeline_fn(text))
