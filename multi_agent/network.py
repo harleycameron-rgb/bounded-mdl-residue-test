@@ -18,6 +18,7 @@ class AgentNetwork:
         self.edges: Dict[str, List[str]] = defaultdict(list)
         self.round_history: List[Dict[str, AgentSnapshot]] = []
         self.message_history: List[List[MessageEnvelope]] = []
+        self.emitted_messages: List[MessageEnvelope] = []
         self.messages_by_delivery_round: Dict[int, List[MessageEnvelope]] = defaultdict(list)
 
     def add_agent(self, agent: AgentNode) -> None:
@@ -27,6 +28,7 @@ class AgentNetwork:
     def reset(self) -> None:
         self.round_history.clear()
         self.message_history.clear()
+        self.emitted_messages.clear()
         self.messages_by_delivery_round.clear()
         for agent in self.agents.values():
             agent.history.clear()
@@ -57,6 +59,7 @@ class AgentNetwork:
         for source, targets in self.edges.items():
             outbound = emit_messages(snapshots[source], targets, delivery_round=round_index + 1)
             round_messages.extend(outbound)
+            self.emitted_messages.extend(outbound)
             self.messages_by_delivery_round[round_index + 1].extend(outbound)
 
         self.message_history.append(round_messages)
