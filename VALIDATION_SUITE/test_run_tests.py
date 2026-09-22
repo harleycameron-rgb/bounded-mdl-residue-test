@@ -65,18 +65,20 @@ class ValidationSuiteHelpersTest(unittest.TestCase):
 
     def test_run_compression_tests_returns_json_friendly_summary(self):
         vectors = [{"id": "sample", "text": "abc", "category": "test", "meta": {}}]
+        mock_core = {"signature": "sig", "compressed_bytes": b"abcd"}
 
         with patch("VALIDATION_SUITE.run_tests.load_test_vectors", return_value=vectors):
-            results = run_compression_tests()
+            with patch("VALIDATION_SUITE.run_tests.impl.compress_text", return_value=mock_core) as compress_text:
+                results = run_compression_tests()
 
-        core = impl.compress_text("abc")
+        compress_text.assert_called_once_with("abc")
         self.assertEqual(
             results,
             [{
                 "id": "sample",
                 "compressed_core": {
-                    "signature": core["signature"],
-                    "compressed_size": len(core["compressed_bytes"]),
+                    "signature": "sig",
+                    "compressed_size": 4,
                 },
             }],
         )

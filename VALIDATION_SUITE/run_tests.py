@@ -14,6 +14,7 @@ if str(ROOT) not in sys.path:
 
 import REFERENCE_IMPLEMENTATION.core as impl
 from REFERENCE_IMPLEMENTATION.alignment_auditor import run_alignment_audit
+from REFERENCE_IMPLEMENTATION.run_benchmark import run_benchmark
 
 
 def resolve_test_vector_paths():
@@ -153,14 +154,17 @@ def run_format_tests():
     vectors = load_test_vectors()
 
     required_keys = {
-        "compressed_core",
-        "residue_signature",
-        "alignment_report",
-        "bounded_response"
+        "input_text",
+        "drift",
+        "alignment",
+        "harmonized",
+        "stability_envelope",
+        "mdl_score",
+        "unified_hash",
     }
 
     for v in vectors:
-        output = impl.run_pipeline(v["text"])
+        output = run_benchmark(v["text"])
         missing = required_keys - set(output.keys())
 
         results.append({
