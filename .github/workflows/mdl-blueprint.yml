@@ -23,7 +23,11 @@ jobs:
 
       - name: Run MDL multi-agent test
         run: |
-          python -m unittest discover -s tests -v
+          python -m unittest -v \
+            tests.test_agent \
+            tests.test_network \
+            tests.test_drift_propagation \
+            tests.test_scenarios
 
       - name: Print drift + residue
         run: |
