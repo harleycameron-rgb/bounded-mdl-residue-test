@@ -160,7 +160,7 @@ def run_format_tests():
     }
 
     for v in vectors:
-        output = make_json_safe(impl.run_pipeline(v["text"]))
+        output = impl.run_pipeline(v["text"])
         missing = required_keys - set(output.keys())
 
         results.append({

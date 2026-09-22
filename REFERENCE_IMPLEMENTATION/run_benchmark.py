@@ -28,7 +28,8 @@ def run_benchmark(text):
     Execute the full MDL benchmark pipeline and return unified output.
     """
     first_output = run_pipeline(text)
-    drift_analysis = analyze_pipeline_drift(first_output, run_pipeline(text))
+    second_output = run_pipeline(text)
+    drift_analysis = analyze_pipeline_drift(first_output, second_output)
 
     return run_unified(
         text,
