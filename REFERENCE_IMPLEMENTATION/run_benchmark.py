@@ -27,15 +27,18 @@ def run_benchmark(text):
     """
     Execute the full MDL benchmark pipeline and return unified output.
     """
+    first_output = run_pipeline(text)
+    second_output = run_pipeline(text)
 
     return run_unified(
         text,
         drift_fn=analyze_drift,
-        pipeline_fn=run_pipeline,
         harmonizer_fn=run_harmonized,
         audit_fn=run_alignment_audit,
         envelope_fn=run_stability_envelope,
-        score_fn=run_mdl_score
+        score_fn=run_mdl_score,
+        pipeline_output=first_output,
+        second_pipeline_output=second_output,
     )
 
 

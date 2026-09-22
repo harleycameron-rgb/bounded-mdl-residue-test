@@ -52,18 +52,26 @@ def compose_unified_output(
 def run_unified(
     text,
     drift_fn,
-    pipeline_fn,
     harmonizer_fn,
     audit_fn,
     envelope_fn,
-    score_fn
+    score_fn,
+    pipeline_fn=None,
+    pipeline_output=None,
+    second_pipeline_output=None,
 ):
     """
     Execute the full MDL pipeline and produce unified output.
     """
 
-    pipeline_output = pipeline_fn(text)
-    drift_analysis = drift_fn(pipeline_output, pipeline_fn(text))
+    if pipeline_output is None:
+        if pipeline_fn is None:
+            raise ValueError("pipeline_fn is required when pipeline_output is not provided")
+        pipeline_output = pipeline_fn(text)
+    if second_pipeline_output is None:
+        second_pipeline_output = pipeline_fn(text)
+
+    drift_analysis = drift_fn(pipeline_output, second_pipeline_output)
     harmonized = harmonizer_fn(pipeline_output)
     alignment_verdict = audit_fn(pipeline_output)
     stability_envelope = envelope_fn(
