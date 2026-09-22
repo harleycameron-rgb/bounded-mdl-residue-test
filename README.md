@@ -1,115 +1,139 @@
 
-README.md
+# bounded-mdl-residue-test
 
-MDL Benchmark — Reference Implementation v1.0.0
-Deterministic multi-layer MDL evaluation pipeline for LLM stability, drift, and residue analysis.
+Deterministic MDL benchmark primitives plus a multi-agent communication analysis framework for studying how drift, residue, alignment, and stability propagate between LLM-like agents during live interaction.
 
----
+## Project vision
 
-1. Overview
+The repository now supports two layers:
 
-This benchmark evaluates:
+1. **Reference MDL benchmark modules** in `REFERENCE_IMPLEMENTATION/`
+2. **Multi-agent communication analysis** in `multi_agent/` and `analysis/`
 
-• compression signature stability
-• residue extraction consistency
-• drift magnitude
-• alignment integrity
-• harmonized bounded response behavior
-• stability envelope formation
-• predictive MDL scoring
-• unified output composition
+The multi-agent layer treats each model as a node with a state vector derived from the MDL output:
 
+- core signature
+- residue signature
+- drift magnitude
+- alignment verdict
+- harmonized response
+- stability envelope
+- MDL score
 
-All modules are deterministic and language-agnostic.
+This enables research into:
 
----
+- cross-model drift propagation
+- residue transfer dynamics
+- alignment divergence across agents
+- stability envelope compatibility
+- harmonized response coherence
+- drift amplification or dampening in a network
 
-2. Repository Structure
+## Repository structure
 
-REFERENCE_IMPLEMENTATION/
-• core.py
-• core.js
-• drift.py
-• residue.py
-• bounded_response.py
-• alignment_auditor.py
-• stability_envelope.py
-• predictive_mdl_score.py
-• unified_output.py
-• run_benchmark.py
+```text
+bounded-mdl-residue-test/
+├── REFERENCE_IMPLEMENTATION/
+├── VALIDATION_SUITE/
+├── analysis/
+├── examples/
+├── multi_agent/
+├── tests/
+├── README.md
+├── requirements.txt
+└── setup.py
+```
 
-VALIDATION_SUITE/
-• run_tests.py
+## Reference benchmark usage
 
----
-
-3. Execution
-
-Python (CLI):
-python REFERENCE_IMPLEMENTATION/run_benchmark.py “your text here”
-
-Python (Module Import):
+```python
 from REFERENCE_IMPLEMENTATION.run_benchmark import run_benchmark
-output = run_benchmark(“your text here”)
-print(output)
 
----
+output = run_benchmark("Measure a deterministic baseline.")
+print(output["drift"]["drift_magnitude"])  # 0 for identical baseline comparison
+```
 
-4. Pipeline Architecture
+The reference benchmark remains deterministic:
 
-4.1 Core Pipeline
-Deterministic compression, residue extraction, and alignment report.
+- stable SHA-256 hashing
+- bounded text windows
+- no stochastic components
+- reproducible output for identical input
 
-4.2 Drift Analysis
-Magnitude-only drift vector derived from text features.
+## Multi-agent framework
 
-4.3 Harmonizer
-Produces bounded echo, stable prefixes, and harmonized hash.
+### Core components
 
-4.4 Alignment Auditor
-Generates alignment verdict, confidence score, and audit hash.
+- `multi_agent.agent` — agent node with per-round state tracking
+- `multi_agent.communication` — prompt composition and message envelopes
+- `multi_agent.network` — chain, tree, and graph topologies with non-recursive rounds
+- `multi_agent.drift_propagation` — pairwise and network drift spread analysis
+- `multi_agent.residue_transfer` — residue change and amplification/dampening tracking
+- `multi_agent.alignment_analyzer` — disagreement and divergence detection
+- `multi_agent.metrics` — coherence and compatibility scoring
+- `analysis.reporter` — aggregate report generation
+- `analysis.visualizer` — lightweight text visualization
 
-4.5 Stability Envelope
-Combines drift + alignment + harmonized response into a stability score.
+### Non-recursive design
 
-4.6 Predictive MDL Score
-Applies base score, drift penalty, alignment penalty, and score hash.
+The communication framework is intentionally bounded: each round only consumes messages emitted in the **previous** round. That prevents same-round feedback loops while still allowing drift propagation analysis over time.
 
-4.7 Unified Output
-Final composed MDL output block with unified hash.
+## Quick start
 
----
+### Validation suite
 
-5. Determinism Guarantees
+```bash
+python VALIDATION_SUITE/run_tests.py
+```
 
-• Stable SHA-256 hashing
-• Prefix-based signatures
-• Bounded text windows
-• No stochastic components
-• Reproducible across runs
-• Identical outputs for identical inputs
+### Focused test suite
 
----
+```bash
+python -m unittest discover -s tests -v
+```
 
-6. Vendor Integration
+### Example scenario
 
-Vendors integrate by calling:
+```bash
+python -m examples.basic_multi_agent
+```
 
-run_benchmark(text)
+## Example workflow
 
-The returned unified output block is submitted as the benchmark result.
+```python
+from analysis.reporter import generate_report
+from multi_agent.agent import AgentNode
+from multi_agent.network import AgentNetwork
 
----
+network = AgentNetwork.from_chain([
+    AgentNode("alpha", model_name="model-a"),
+    AgentNode("beta", model_name="model-b"),
+    AgentNode("gamma", model_name="model-c"),
+])
 
-7. Versioning
+network.run("Track drift propagation without recursion.", rounds=2)
+report = generate_report(network)
+print(report["metrics"])
+print(report["alignment"])
+```
 
-Current version: v1.0.0
-All modules in the reference layer are locked and deterministic.
+## Research methodology guide
 
----
+1. Build a network topology with `AgentNetwork`
+2. Inject a shared prompt or scenario
+3. Execute bounded rounds of communication
+4. Compare state vectors across edges and rounds
+5. Inspect compatibility, coherence, drift, residue, and divergence reports
 
-8. Contact
+Suggested scenarios:
 
-For MDL benchmark integration, specification details, or vendor onboarding, refer to the MDL documentation or your integration channel.
+- aligned peers with matching prompts
+- diverging agents with mismatched alignment outputs
+- cascading drift along a chain
+- tree fan-out for stability envelope compatibility
 
+## Development notes
 
+- The project currently uses only the Python standard library.
+- `setup.py` is included for lightweight packaging.
+- Example scripts are deterministic demonstrations rather than live API integrations.

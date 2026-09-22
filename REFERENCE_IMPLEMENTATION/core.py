@@ -35,7 +35,7 @@ def compress_text(text):
 # ------------------------------------------------------------
 # Residue Extraction
 # ------------------------------------------------------------
-def extract_residue(text):
+def extract_residue(text, core=None):
     """
     Extract residue as a simple deterministic placeholder:
     - length
@@ -98,3 +98,24 @@ def run_pipeline(text):
         "alignment_report": alignment,
         "bounded_response": bounded_response
     }
+
+
+def compress(text):
+    """
+    Compatibility wrapper used by the validation suite.
+    """
+    return compress_text(text)["signature"]
+
+
+def check_alignment(core_sig, residue_sig):
+    """
+    Compatibility wrapper used by the validation suite.
+    """
+    return alignment_report(core_sig, residue_sig)
+
+
+def run_full_pipeline(text):
+    """
+    Compatibility wrapper used by the validation suite.
+    """
+    return run_pipeline(text)
