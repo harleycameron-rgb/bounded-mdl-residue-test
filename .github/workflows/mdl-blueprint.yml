@@ -1,4 +1,4 @@
-name: MDL Blueprint CI
+name: MDL oBlueprint CI
 
 on:
   push:
