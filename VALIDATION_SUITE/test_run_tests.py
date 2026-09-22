@@ -81,6 +81,14 @@ class ValidationSuiteHelpersTest(unittest.TestCase):
             }],
         )
 
+    def test_extract_residue_supports_legacy_and_current_signatures(self):
+        core = impl.compress_text("abc")
+
+        self.assertEqual(
+            impl.extract_residue("abc"),
+            impl.extract_residue("abc", core),
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

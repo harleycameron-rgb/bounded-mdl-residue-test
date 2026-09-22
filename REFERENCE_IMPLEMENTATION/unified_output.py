@@ -58,6 +58,7 @@ def run_unified(
     drift_fn=None,
     pipeline_fn=None,
     pipeline_output=None,
+    second_pipeline_output=None,
     drift_analysis=None,
 ):
     """
@@ -69,11 +70,16 @@ def run_unified(
             raise ValueError("pipeline_fn is required when pipeline_output is not provided")
         pipeline_output = pipeline_fn(text)
     if drift_analysis is None:
-        if drift_fn is None or pipeline_fn is None:
+        if drift_fn is None:
+            raise ValueError("drift_fn is required when drift_analysis is not provided")
+        if second_pipeline_output is not None:
+            drift_analysis = drift_fn(pipeline_output, second_pipeline_output)
+        elif pipeline_fn is not None:
+            drift_analysis = drift_fn(text, pipeline_fn)
+        else:
             raise ValueError(
-                "drift_fn and pipeline_fn are required when drift_analysis is not provided"
+                "pipeline_fn or second_pipeline_output is required when drift_analysis is not provided"
             )
-        drift_analysis = drift_fn(text, pipeline_fn)
     harmonized = harmonizer_fn(pipeline_output)
     alignment_verdict = audit_fn(pipeline_output)
     stability_envelope = envelope_fn(
