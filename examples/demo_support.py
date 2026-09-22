@@ -5,6 +5,6 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from tests.helpers import make_output
+from support.mock_outputs import make_output
 
 __all__ = ["make_output"]

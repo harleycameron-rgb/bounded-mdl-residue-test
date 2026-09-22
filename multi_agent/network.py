@@ -32,12 +32,12 @@ class AgentNetwork:
     def predecessors(self, target: str) -> List[str]:
         return [source for source, targets in self.edges.items() if target in targets]
 
-    def messages_for_round(self, round_index: int) -> List[MessageEnvelope]:
+    def messages_delivered_in_round(self, round_index: int) -> List[MessageEnvelope]:
         return [message for message in self.message_history if message.round_index == round_index]
 
     def run_round(self, prompt: str) -> Dict[str, AgentSnapshot]:
         round_index = len(self.round_history)
-        previous_messages = self.messages_for_round(round_index)
+        previous_messages = self.messages_delivered_in_round(round_index)
         snapshots: Dict[str, AgentSnapshot] = {}
 
         for agent_name, agent in self.agents.items():

@@ -23,6 +23,18 @@ class NetworkTests(unittest.TestCase):
         network = AgentNetwork.from_graph(agents, [("a", "b"), ("a", "c")])
         self.assertEqual(sorted(network.edges["a"]), ["b", "c"])
 
+    def test_tree_topology_wires_children(self):
+        root = AgentNode("root", evaluator=lambda prompt: make_output(prompt))
+        left = AgentNode("left", evaluator=lambda prompt: make_output(prompt))
+        right = AgentNode("right", evaluator=lambda prompt: make_output(prompt))
+        network = AgentNetwork.from_tree(root, {"root": [left, right]})
+
+        network.run("tree prompt", rounds=2)
+
+        self.assertEqual(sorted(network.edges["root"]), ["left", "right"])
+        self.assertIn("[network_context]", network.round_history[1]["left"].prompt)
+        self.assertIn("[network_context]", network.round_history[1]["right"].prompt)
+
 
 if __name__ == "__main__":
     unittest.main()

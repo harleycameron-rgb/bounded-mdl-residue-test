@@ -49,8 +49,7 @@ def run_benchmark(text):
         stability_envelope,
         mdl_score,
     )
-    unified.update(pipeline_output)
-    return unified
+    return {**pipeline_output, **unified}
 
 
 # ------------------------------------------------------------
