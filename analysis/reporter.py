@@ -10,7 +10,10 @@ from multi_agent.residue_transfer import analyze_network as analyze_residue_netw
 
 
 def _resolve_round_index(round_index: int, total_rounds: int) -> int:
-    return round_index if round_index >= 0 else total_rounds + round_index
+    resolved = round_index if round_index >= 0 else total_rounds + round_index
+    if not 0 <= resolved < total_rounds:
+        raise IndexError(f"round_index {round_index} is out of range for {total_rounds} rounds")
+    return resolved
 
 
 def _scope_records(records, round_index: int, total_rounds: int):

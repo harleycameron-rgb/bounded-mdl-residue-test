@@ -39,6 +39,19 @@ class ScenarioTests(unittest.TestCase):
         )
         self.assertIn("alpha -> beta", render_network_text(network))
 
+    def test_report_can_scope_to_explicit_round(self):
+        alpha = AgentNode("alpha", evaluator=lambda prompt: make_output(prompt, aligned=True, drift_magnitude=0))
+        beta = AgentNode("beta", evaluator=lambda prompt: make_output(prompt, aligned=False, drift_magnitude=2))
+        network = AgentNetwork.from_chain([alpha, beta])
+        network.run("divergent prompt", rounds=2)
+
+        report = generate_report(network, round_index=1)
+
+        self.assertEqual(len(report["drift"]), 1)
+        self.assertEqual(len(report["residue"]), 1)
+        self.assertEqual(report["drift"][0]["delivery_round"], 2)
+        self.assertEqual(report["residue"][0]["delivery_round"], 2)
+
 
 if __name__ == "__main__":
     unittest.main()

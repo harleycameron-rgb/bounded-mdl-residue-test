@@ -10,7 +10,7 @@ from .agent import AgentSnapshot, StateVector
 class MessageEnvelope:
     source: str
     target: str
-    round_index: int
+    delivery_round: int
     prompt: str
     response: str
     state_vector: StateVector
@@ -37,7 +37,7 @@ def emit_messages(
         MessageEnvelope(
             source=snapshot.agent_name,
             target=target,
-            round_index=delivery_round,
+            delivery_round=delivery_round,
             prompt=snapshot.prompt,
             response=snapshot.response,
             state_vector=snapshot.state_vector,
