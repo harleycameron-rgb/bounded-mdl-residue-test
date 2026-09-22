@@ -15,14 +15,18 @@ if str(ROOT) not in sys.path:
 import REFERENCE_IMPLEMENTATION.core as impl
 
 
-def resolve_test_vectors_base():
+def resolve_test_vector_paths():
     base = ROOT / "TEST_VECTORS"
-    if (base / "metadata.json").exists():
-        return base
-    nested_base = base / "TEST_VECTORS"
-    if (nested_base / "metadata.json").exists():
-        return nested_base
-    raise FileNotFoundError("Unable to locate TEST_VECTORS metadata.json")
+    candidate_layouts = (
+        (base / "inputs", base / "metadata.json"),
+        (base / "inputs", base / "TEST_VECTORS" / "metadata.json"),
+    )
+
+    for inputs_dir, metadata_file in candidate_layouts:
+        if inputs_dir.is_dir() and metadata_file.exists():
+            return inputs_dir, metadata_file
+
+    raise FileNotFoundError("Unable to locate test vector inputs and metadata")
 
 
 def make_json_safe(value):
@@ -39,9 +43,7 @@ def make_json_safe(value):
 # Load Test Vectors
 # ------------------------------------------------------------
 def load_test_vectors():
-    base = resolve_test_vectors_base()
-    inputs_dir = base / "inputs"
-    metadata_file = base / "metadata.json"
+    inputs_dir, metadata_file = resolve_test_vector_paths()
 
     with open(metadata_file, "r") as f:
         metadata = json.load(f)
