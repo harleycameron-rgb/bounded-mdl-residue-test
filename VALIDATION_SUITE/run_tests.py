@@ -48,13 +48,13 @@ def make_json_safe(value):
 def load_test_vectors():
     inputs_dir, metadata_file = resolve_test_vector_paths()
 
-    with open(metadata_file, "r") as f:
+    with open(metadata_file, "r", encoding="utf-8") as f:
         metadata = json.load(f)
 
     vectors = []
     for entry in metadata["test_vectors"]:
         input_path = inputs_dir / f"{entry['input_id']}.txt"
-        with open(input_path, "r") as f:
+        with open(input_path, "r", encoding="utf-8") as f:
             text = f.read().strip()
 
         vectors.append({

@@ -3,7 +3,7 @@
 # Unified execution harness for full MDL pipeline
 # ------------------------------------------------------------
 
-try:
+if __package__:
     from .core import run_pipeline
     from .drift import analyze_pipeline_drift
     from .bounded_response import run_harmonized
@@ -11,7 +11,7 @@ try:
     from .stability_envelope import run_stability_envelope
     from .predictive_mdl_score import run_mdl_score
     from .unified_output import run_unified
-except ImportError:
+else:
     from core import run_pipeline
     from drift import analyze_pipeline_drift
     from bounded_response import run_harmonized
