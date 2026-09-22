@@ -72,14 +72,13 @@ def run_unified(
     if drift_analysis is None:
         if drift_fn is None:
             raise ValueError("drift_fn is required when drift_analysis is not provided")
-        if second_pipeline_output is not None:
-            drift_analysis = drift_fn(pipeline_output, second_pipeline_output)
-        elif pipeline_fn is not None:
-            drift_analysis = drift_fn(text, pipeline_fn)
-        else:
-            raise ValueError(
-                "pipeline_fn or second_pipeline_output is required when drift_analysis is not provided"
-            )
+        if second_pipeline_output is None:
+            if pipeline_fn is None:
+                raise ValueError(
+                    "pipeline_fn is required when second_pipeline_output is not provided"
+                )
+            second_pipeline_output = pipeline_fn(text)
+        drift_analysis = drift_fn(pipeline_output, second_pipeline_output)
     harmonized = harmonizer_fn(pipeline_output)
     alignment_verdict = audit_fn(pipeline_output)
     stability_envelope = envelope_fn(
