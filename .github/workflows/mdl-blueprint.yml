@@ -23,16 +23,19 @@ jobs:
 
       - name: Run MDL multi-agent test
         run: |
-          python tests/run_mdl.py
+          python -m unittest discover -s tests -v
 
       - name: Print drift + residue
         run: |
           python - << 'EOF'
-          from mdl.runtime import generate_report, AgentNetwork
-          network = AgentNetwork([
-              ("alpha", "model-a"),
-              ("beta", "model-b"),
-              ("gamma", "model-c"),
+          from analysis.reporter import generate_report
+          from multi_agent.agent import AgentNode
+          from multi_agent.network import AgentNetwork
+
+          network = AgentNetwork.from_chain([
+              AgentNode("alpha", model_name="model-a"),
+              AgentNode("beta", model_name="model-b"),
+              AgentNode("gamma", model_name="model-c"),
           ])
           network.run("Track drift propagation without recursion.", rounds=2)
           report = generate_report(network, round_index=1)
