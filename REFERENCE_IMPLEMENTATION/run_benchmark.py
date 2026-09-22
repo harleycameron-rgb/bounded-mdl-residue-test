@@ -3,13 +3,22 @@
 # Unified execution harness for full MDL pipeline
 # ------------------------------------------------------------
 
-from core import run_pipeline
-from drift import analyze_drift
-from bounded_response import run_harmonized
-from alignment_auditor import run_alignment_audit
-from stability_envelope import run_stability_envelope
-from predictive_mdl_score import run_mdl_score
-from unified_output import run_unified
+try:
+    from .core import run_pipeline
+    from .drift import analyze_drift
+    from .bounded_response import run_harmonized
+    from .alignment_auditor import run_alignment_audit
+    from .stability_envelope import run_stability_envelope
+    from .predictive_mdl_score import run_mdl_score
+    from .unified_output import run_unified
+except ImportError:
+    from core import run_pipeline
+    from drift import analyze_drift
+    from bounded_response import run_harmonized
+    from alignment_auditor import run_alignment_audit
+    from stability_envelope import run_stability_envelope
+    from predictive_mdl_score import run_mdl_score
+    from unified_output import run_unified
 
 # ------------------------------------------------------------
 # Unified Benchmark Runner

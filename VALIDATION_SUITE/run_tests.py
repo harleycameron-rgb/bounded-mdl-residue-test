@@ -1,5 +1,5 @@
-#import json
-import os
+import json
+import sys
 from pathlib import Path
 
 # ------------------------------------------------------------
@@ -8,6 +8,10 @@ from pathlib import Path
 # ------------------------------------------------------------
 
 # Import reference implementation
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 import REFERENCE_IMPLEMENTATION.core as impl
 
 
@@ -15,9 +19,11 @@ import REFERENCE_IMPLEMENTATION.core as impl
 # Load Test Vectors
 # ------------------------------------------------------------
 def load_test_vectors():
-    base = Path("TEST_VECTORS")
+    base = ROOT / "TEST_VECTORS"
     inputs_dir = base / "inputs"
     metadata_file = base / "metadata.json"
+    if not metadata_file.exists():
+        metadata_file = base / "TEST_VECTORS" / "metadata.json"
 
     with open(metadata_file, "r") as f:
         metadata = json.load(f)
@@ -46,10 +52,13 @@ def run_compression_tests():
     vectors = load_test_vectors()
 
     for v in vectors:
-        core = impl.compress(v["text"])
+        core = impl.compress_text(v["text"])
         results.append({
             "id": v["id"],
-            "compressed_core": core
+            "compressed_core": {
+                "signature": core["signature"],
+                "compressed_size": len(core["compressed_bytes"]),
+            }
         })
 
     return results
@@ -63,8 +72,7 @@ def run_residue_tests():
     vectors = load_test_vectors()
 
     for v in vectors:
-        core = impl.compress(v["text"])
-        residue = impl.extract_residue(v["text"], core)
+        residue = impl.extract_residue(v["text"])
         results.append({
             "id": v["id"],
             "residue_signature": residue
@@ -81,9 +89,9 @@ def run_alignment_tests():
     vectors = load_test_vectors()
 
     for v in vectors:
-        core = impl.compress(v["text"])
-        residue = impl.extract_residue(v["text"], core)
-        alignment = impl.check_alignment(core, residue)
+        core = impl.compress_text(v["text"])
+        residue = impl.extract_residue(v["text"])
+        alignment = impl.alignment_report(core["signature"], residue)
         results.append({
             "id": v["id"],
             "alignment_report": alignment
@@ -100,8 +108,8 @@ def run_drift_tests():
     vectors = load_test_vectors()
 
     for v in vectors:
-        first = impl.run_full_pipeline(v["text"])
-        second = impl.run_full_pipeline(v["text"])
+        first = impl.run_pipeline(v["text"])
+        second = impl.run_pipeline(v["text"])
 
         drift_detected = first != second
 
@@ -130,7 +138,7 @@ def run_format_tests():
     }
 
     for v in vectors:
-        output = impl.run_full_pipeline(v["text"])
+        output = impl.run_pipeline(v["text"])
         missing = required_keys - set(output.keys())
 
         results.append({
@@ -161,4 +169,3 @@ def run_all_tests():
 if __name__ == "__main__":
     report = run_all_tests()
     print(json.dumps(report, indent=2))
-

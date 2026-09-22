@@ -11,8 +11,14 @@ import json
 # ------------------------------------------------------------
 def stable_hash(obj):
     """Compute a deterministic hash for any JSON‑serializable object."""
-    encoded = json.dumps(obj, sort_keys=True).encode("utf-8")
+    encoded = json.dumps(obj, sort_keys=True, default=_json_default).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
+
+
+def _json_default(value):
+    if isinstance(value, bytes):
+        return value.hex()
+    raise TypeError(f"Object of type {type(value).__name__} is not JSON serializable")
 
 
 # ------------------------------------------------------------

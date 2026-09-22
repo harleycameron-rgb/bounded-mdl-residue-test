@@ -41,9 +41,8 @@ def harmonize_response(pipeline_output):
 # ------------------------------------------------------------
 # Full Harmonized Pipeline Wrapper
 # ------------------------------------------------------------
-def run_harmonized(text, pipeline_fn):
+def run_harmonized(pipeline_output):
     """
-    Wrap the full MDL pipeline with harmonization.
+    Wrap pipeline output with harmonization.
     """
-    raw = pipeline_fn(text)
-    return harmonize_response(raw)
+    return harmonize_response(pipeline_output)
