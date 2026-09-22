@@ -16,7 +16,7 @@ def track_pair(source: AgentSnapshot, target: AgentSnapshot) -> Dict[str, object
         "target": target.agent_name,
         "source_round": source.round_index,
         "target_round": target.round_index,
-        "delivery_round": target.round_index + 1,
+        "delivery_round": target.round_index,
         "source_residue": source_residue,
         "target_residue": target_residue,
         "residue_changed": source_residue != target_residue,

@@ -49,8 +49,8 @@ class ScenarioTests(unittest.TestCase):
 
         self.assertEqual(len(report["drift"]), 1)
         self.assertEqual(len(report["residue"]), 1)
-        self.assertEqual(report["drift"][0]["delivery_round"], 2)
-        self.assertEqual(report["residue"][0]["delivery_round"], 2)
+        self.assertEqual(report["drift"][0]["delivery_round"], 1)
+        self.assertEqual(report["residue"][0]["delivery_round"], 1)
 
 
 if __name__ == "__main__":
