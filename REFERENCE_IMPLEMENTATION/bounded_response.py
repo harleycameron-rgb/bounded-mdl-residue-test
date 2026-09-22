@@ -45,5 +45,8 @@ def run_harmonized(text, pipeline_fn):
     """
     Wrap the full MDL pipeline with harmonization.
     """
-    raw = pipeline_fn(text)
+    if isinstance(text, dict):
+        raw = text
+    else:
+        raw = pipeline_fn(text)
     return harmonize_response(raw)

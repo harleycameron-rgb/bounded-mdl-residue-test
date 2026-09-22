@@ -11,7 +11,11 @@ import json
 # ------------------------------------------------------------
 def stable_hash(obj):
     """Compute a deterministic hash for any JSON‑serializable object."""
-    encoded = json.dumps(obj, sort_keys=True).encode("utf-8")
+    encoded = json.dumps(
+        obj,
+        sort_keys=True,
+        default=lambda value: value.hex() if isinstance(value, (bytes, bytearray)) else str(value),
+    ).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
 
 

@@ -16,7 +16,7 @@ def prefix_hash(text):
 # Unified Composer
 # ------------------------------------------------------------
 def compose_unified_output(
-    text,
+    pipeline_output,
     drift_analysis,
     alignment_verdict,
     harmonized_response,
@@ -28,7 +28,7 @@ def compose_unified_output(
     """
 
     unified = {
-        "input_text": text[:200],
+        "input_text": pipeline_output["bounded_response"]["echo"][:200],
         "drift": drift_analysis,
         "alignment": alignment_verdict,
         "harmonized": harmonized_response,
@@ -63,7 +63,7 @@ def run_unified(
     """
 
     pipeline_output = pipeline_fn(text)
-    drift_analysis = drift_fn(text)
+    drift_analysis = drift_fn(pipeline_output, pipeline_output)
     harmonized = harmonizer_fn(pipeline_output)
     alignment_verdict = audit_fn(pipeline_output)
     stability_envelope = envelope_fn(
@@ -78,7 +78,7 @@ def run_unified(
     )
 
     return compose_unified_output(
-        text,
+        pipeline_output,
         drift_analysis,
         alignment_verdict,
         harmonized,

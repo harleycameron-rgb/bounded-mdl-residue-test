@@ -1,6 +1,11 @@
-#import json
+import json
+import sys
 import os
 from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 # ------------------------------------------------------------
 # Validation Suite — Bounded Predictive‑MDL Residue Test v1.0.0
@@ -15,9 +20,11 @@ import REFERENCE_IMPLEMENTATION.core as impl
 # Load Test Vectors
 # ------------------------------------------------------------
 def load_test_vectors():
-    base = Path("TEST_VECTORS")
+    base = ROOT / "TEST_VECTORS"
     inputs_dir = base / "inputs"
     metadata_file = base / "metadata.json"
+    if not metadata_file.exists():
+        metadata_file = base / "TEST_VECTORS" / "metadata.json"
 
     with open(metadata_file, "r") as f:
         metadata = json.load(f)
@@ -160,5 +167,10 @@ def run_all_tests():
 # ------------------------------------------------------------
 if __name__ == "__main__":
     report = run_all_tests()
-    print(json.dumps(report, indent=2))
-
+    print(
+        json.dumps(
+            report,
+            indent=2,
+            default=lambda value: value.hex() if isinstance(value, (bytes, bytearray)) else str(value),
+        )
+    )
