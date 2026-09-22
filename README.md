@@ -1,12 +1,29 @@
 
-README.md
+# MDL Benchmark — Reference Implementation v1.0.0
 
-MDL Benchmark — Reference Implementation v1.0.0
 Deterministic multi-layer MDL evaluation pipeline for LLM stability, drift, and residue analysis.
+
+## Contents
+
+- [Overview](#overview)
+- [Repository Structure](#repository-structure)
+- [Execution](#execution)
+- [Pipeline Architecture](#pipeline-architecture)
+  - [Core Pipeline](#core-pipeline)
+  - [Drift Analysis](#drift-analysis)
+  - [Harmonizer](#harmonizer)
+  - [Alignment Auditor](#alignment-auditor)
+  - [Stability Envelope](#stability-envelope)
+  - [Predictive MDL Score](#predictive-mdl-score)
+  - [Unified Output](#unified-output)
+- [Determinism Guarantees](#determinism-guarantees)
+- [Vendor Integration](#vendor-integration)
+- [Versioning](#versioning)
+- [Contact](#contact)
 
 ---
 
-1. Overview
+## Overview
 
 This benchmark evaluates:
 
@@ -24,7 +41,7 @@ All modules are deterministic and language-agnostic.
 
 ---
 
-2. Repository Structure
+## Repository Structure
 
 REFERENCE_IMPLEMENTATION/
 • core.py
@@ -43,7 +60,7 @@ VALIDATION_SUITE/
 
 ---
 
-3. Execution
+## Execution
 
 Python (CLI):
 python REFERENCE_IMPLEMENTATION/run_benchmark.py “your text here”
@@ -55,32 +72,32 @@ print(output)
 
 ---
 
-4. Pipeline Architecture
+## Pipeline Architecture
 
-4.1 Core Pipeline
+### Core Pipeline
 Deterministic compression, residue extraction, and alignment report.
 
-4.2 Drift Analysis
+### Drift Analysis
 Magnitude-only drift vector derived from text features.
 
-4.3 Harmonizer
+### Harmonizer
 Produces bounded echo, stable prefixes, and harmonized hash.
 
-4.4 Alignment Auditor
+### Alignment Auditor
 Generates alignment verdict, confidence score, and audit hash.
 
-4.5 Stability Envelope
+### Stability Envelope
 Combines drift + alignment + harmonized response into a stability score.
 
-4.6 Predictive MDL Score
+### Predictive MDL Score
 Applies base score, drift penalty, alignment penalty, and score hash.
 
-4.7 Unified Output
+### Unified Output
 Final composed MDL output block with unified hash.
 
 ---
 
-5. Determinism Guarantees
+## Determinism Guarantees
 
 • Stable SHA-256 hashing
 • Prefix-based signatures
@@ -91,7 +108,7 @@ Final composed MDL output block with unified hash.
 
 ---
 
-6. Vendor Integration
+## Vendor Integration
 
 Vendors integrate by calling:
 
@@ -101,15 +118,14 @@ The returned unified output block is submitted as the benchmark result.
 
 ---
 
-7. Versioning
+## Versioning
 
 Current version: v1.0.0
 All modules in the reference layer are locked and deterministic.
 
 ---
 
-8. Contact
+## Contact
 
 For MDL benchmark integration, specification details, or vendor onboarding, refer to the MDL documentation or your integration channel.
-
 
