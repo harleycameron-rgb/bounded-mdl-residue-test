@@ -18,6 +18,7 @@ class AgentNetwork:
         self.edges: Dict[str, List[str]] = defaultdict(list)
         self.round_history: List[Dict[str, AgentSnapshot]] = []
         self.message_history: List[MessageEnvelope] = []
+        self.messages_by_delivery_round: Dict[int, List[MessageEnvelope]] = defaultdict(list)
 
     def add_agent(self, agent: AgentNode) -> None:
         self.agents[agent.name] = agent
@@ -33,7 +34,7 @@ class AgentNetwork:
         return [source for source, targets in self.edges.items() if target in targets]
 
     def messages_delivered_in_round(self, round_index: int) -> List[MessageEnvelope]:
-        return [message for message in self.message_history if message.round_index == round_index]
+        return list(self.messages_by_delivery_round.get(round_index, []))
 
     def run_round(self, prompt: str) -> Dict[str, AgentSnapshot]:
         round_index = len(self.round_history)
@@ -46,9 +47,9 @@ class AgentNetwork:
             snapshots[agent_name] = agent.process(composed_prompt, round_index)
 
         for source, targets in self.edges.items():
-            self.message_history.extend(
-                emit_messages(snapshots[source], targets, delivery_round=round_index + 1)
-            )
+            outbound = emit_messages(snapshots[source], targets, delivery_round=round_index + 1)
+            self.message_history.extend(outbound)
+            self.messages_by_delivery_round[round_index + 1].extend(outbound)
 
         self.round_history.append(snapshots)
         return snapshots

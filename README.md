@@ -95,7 +95,7 @@ python -m unittest discover -s tests -v
 ### Example scenario
 
 ```bash
-python examples/basic_multi_agent.py
+python -m examples.basic_multi_agent
 ```
 
 ## Example workflow
@@ -137,4 +137,3 @@ Suggested scenarios:
 - The project currently uses only the Python standard library.
 - `setup.py` is included for lightweight packaging.
 - Example scripts are deterministic demonstrations rather than live API integrations.
-
