@@ -17,7 +17,7 @@ class AgentNetwork:
         self.agents: "OrderedDict[str, AgentNode]" = OrderedDict()
         self.edges: Dict[str, List[str]] = defaultdict(list)
         self.round_history: List[Dict[str, AgentSnapshot]] = []
-        self.message_history: List[MessageEnvelope] = []
+        self.message_history: List[List[MessageEnvelope]] = []
         self.messages_by_delivery_round: Dict[int, List[MessageEnvelope]] = defaultdict(list)
 
     def add_agent(self, agent: AgentNode) -> None:
@@ -53,11 +53,13 @@ class AgentNetwork:
             composed_prompt = build_prompt(prompt, inbound)
             snapshots[agent_name] = agent.process(composed_prompt, round_index)
 
+        round_messages: List[MessageEnvelope] = []
         for source, targets in self.edges.items():
             outbound = emit_messages(snapshots[source], targets, delivery_round=round_index + 1)
-            self.message_history.extend(outbound)
+            round_messages.extend(outbound)
             self.messages_by_delivery_round[round_index + 1].extend(outbound)
 
+        self.message_history.append(round_messages)
         self.round_history.append(snapshots)
         return snapshots
 
