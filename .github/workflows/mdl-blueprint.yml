@@ -28,17 +28,28 @@ jobs:
       - name: Print drift + residue
         run: |
           python - << 'EOF'
-from mdl.runtime import generate_report, AgentNetwork
+import sys
+try:
+    from mdl.runtime import generate_report, AgentNetwork
 
-network = AgentNetwork([
-    ("alpha", "model-a"),
-    ("beta", "model-b"),
-    ("gamma", "model-c"),
-])
+    network = AgentNetwork([
+        ("alpha", "model-a"),
+        ("beta", "model-b"),
+        ("gamma", "model-c"),
+    ])
 
-network.run("Track drift propagation without recursion.", rounds=2)
-report = generate_report(network, round_index=1)
+    network.run("Track drift propagation without recursion.", rounds=2)
+    report = generate_report(network, round_index=1)
 
-print("DRIFT:", report["drift"])
-print("RESIDUE:", report["residue"])
+    print("DRIFT:", report["drift"])
+    print("RESIDUE:", report["residue"])
+except ImportError as e:
+    print(f"Import Error: {e}", file=sys.stderr)
+    print("Ensure mdl package is in requirements.txt", file=sys.stderr)
+    sys.exit(1)
+except Exception as e:
+    print(f"Error: {e}", file=sys.stderr)
+    import traceback
+    traceback.print_exc()
+    sys.exit(1)
 EOF
