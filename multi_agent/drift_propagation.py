@@ -50,6 +50,7 @@ def measure_pair(source: AgentSnapshot, target: AgentSnapshot) -> Dict[str, obje
         "target": target.agent_name,
         "source_round": source.round_index,
         "target_round": target.round_index,
+        "delivery_round": target.round_index + 1,
         "distance": distance["distance"],
         "component_distances": distance["component_distances"],
         "drift_delta": delta,

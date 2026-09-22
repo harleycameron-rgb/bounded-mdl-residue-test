@@ -24,6 +24,13 @@ class AgentNetwork:
         self.agents[agent.name] = agent
         self.edges.setdefault(agent.name, [])
 
+    def reset(self) -> None:
+        self.round_history.clear()
+        self.message_history.clear()
+        self.messages_by_delivery_round.clear()
+        for agent in self.agents.values():
+            agent.history.clear()
+
     def connect(self, source: str, target: str) -> None:
         if source not in self.agents or target not in self.agents:
             raise KeyError("Both source and target must be registered agents")
@@ -55,6 +62,7 @@ class AgentNetwork:
         return snapshots
 
     def run(self, prompt: str, rounds: int = 1) -> List[Dict[str, AgentSnapshot]]:
+        self.reset()
         return [self.run_round(prompt) for _ in range(rounds)]
 
     @classmethod

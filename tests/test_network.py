@@ -35,6 +35,20 @@ class NetworkTests(unittest.TestCase):
         self.assertIn("[network_context]", network.round_history[1]["left"].prompt)
         self.assertIn("[network_context]", network.round_history[1]["right"].prompt)
 
+    def test_run_resets_prior_execution_state(self):
+        agent_a = AgentNode("a", evaluator=lambda prompt: make_output(prompt))
+        agent_b = AgentNode("b", evaluator=lambda prompt: make_output(prompt))
+        network = AgentNetwork.from_chain([agent_a, agent_b])
+
+        first_history = network.run("first prompt", rounds=2)
+        second_history = network.run("second prompt", rounds=1)
+
+        self.assertEqual(len(first_history), 2)
+        self.assertEqual(len(second_history), 1)
+        self.assertEqual(len(network.round_history), 1)
+        self.assertEqual(network.round_history[0]["a"].prompt, "second prompt")
+        self.assertEqual(len(network.message_history), 1)
+
 
 if __name__ == "__main__":
     unittest.main()
