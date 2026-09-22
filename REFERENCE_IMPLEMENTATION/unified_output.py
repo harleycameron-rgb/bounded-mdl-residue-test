@@ -69,6 +69,10 @@ def run_unified(
             raise ValueError("pipeline_fn is required when pipeline_output is not provided")
         pipeline_output = pipeline_fn(text)
     if second_pipeline_output is None:
+        if pipeline_fn is None:
+            raise ValueError(
+                "second_pipeline_output is required when pipeline_fn is not provided"
+            )
         second_pipeline_output = pipeline_fn(text)
 
     drift_analysis = drift_fn(pipeline_output, second_pipeline_output)
