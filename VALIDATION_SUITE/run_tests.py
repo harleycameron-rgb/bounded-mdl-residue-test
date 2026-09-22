@@ -15,6 +15,16 @@ if str(ROOT) not in sys.path:
 import REFERENCE_IMPLEMENTATION.core as impl
 
 
+def make_json_safe(value):
+    if isinstance(value, bytes):
+        return value.hex()
+    if isinstance(value, dict):
+        return {key: make_json_safe(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [make_json_safe(item) for item in value]
+    return value
+
+
 # ------------------------------------------------------------
 # Load Test Vectors
 # ------------------------------------------------------------
@@ -116,8 +126,8 @@ def run_drift_tests():
         results.append({
             "id": v["id"],
             "drift_detected": drift_detected,
-            "first_run": first,
-            "second_run": second
+            "first_run": make_json_safe(first),
+            "second_run": make_json_safe(second)
         })
 
     return results
@@ -138,7 +148,7 @@ def run_format_tests():
     }
 
     for v in vectors:
-        output = impl.run_pipeline(v["text"])
+        output = make_json_safe(impl.run_pipeline(v["text"]))
         missing = required_keys - set(output.keys())
 
         results.append({
