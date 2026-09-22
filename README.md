@@ -20,3 +20,19 @@ All modules are deterministic and language-agnostic.
 
 ## 2. Repository Structure
 
+REFERENCE_IMPLEMENTATION/
+    core.py
+    core.js
+    drift.py
+    residue.py
+    bounded_response.py
+    alignment_auditor.py
+    stability_envelope.py
+    predictive_mdl_score.py
+    unified_output.py
+    run_benchmark.py
+
+VALIDATION_SUITE/
+    run_tests.py
+
+
