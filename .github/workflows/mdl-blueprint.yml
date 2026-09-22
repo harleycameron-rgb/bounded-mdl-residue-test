@@ -38,4 +38,4 @@ jobs:
           report = generate_report(network, round_index=1)
           print("DRIFT:", report["drift"])
           print("RESIDUE:", report["residue"])
-          EOF
+          EOF 
