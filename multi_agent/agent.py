@@ -61,6 +61,8 @@ class AgentNode:
         output = self.evaluator(prompt)
         state_vector = state_vector_from_output(output)
         harmonized = state_vector["harmonized_response"]
+        if not isinstance(harmonized, dict):
+            harmonized = {}
         response = harmonized.get("bounded_echo", output.get("bounded_response", {}).get("echo", ""))
         snapshot = AgentSnapshot(
             agent_name=self.name,

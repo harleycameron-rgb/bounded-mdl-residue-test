@@ -5,7 +5,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from demo_support import make_output
+from examples.demo_support import make_output
 from analysis.reporter import generate_report
 from multi_agent.agent import AgentNode
 from multi_agent.network import AgentNetwork

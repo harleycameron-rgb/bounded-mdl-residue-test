@@ -42,7 +42,7 @@ def run_benchmark(text):
         alignment_verdict,
     )
     unified = compose_unified_output(
-        text,
+        pipeline_output,
         drift_analysis,
         alignment_verdict,
         harmonized,
