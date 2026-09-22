@@ -98,7 +98,7 @@ def run_residue_tests():
         residue = impl.extract_residue(v["text"])
         results.append({
             "id": v["id"],
-            "residue_signature": residue
+            "residue": make_json_safe(residue)
         })
 
     return results
@@ -116,7 +116,7 @@ def run_alignment_tests():
         alignment = run_alignment_audit(pipeline_output)
         results.append({
             "id": v["id"],
-            "alignment": alignment
+            "alignment": make_json_safe(alignment)
         })
 
     return results
