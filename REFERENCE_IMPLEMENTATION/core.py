@@ -35,7 +35,7 @@ def compress_text(text):
 # ------------------------------------------------------------
 # Residue Extraction
 # ------------------------------------------------------------
-def extract_residue(text):
+def extract_residue(text, core=None):
     """
     Extract residue as a simple deterministic placeholder:
     - length
@@ -71,6 +71,21 @@ def alignment_report(core_sig, residue_sig):
     }
 
 
+def compress(text):
+    """
+    Backwards-compatible alias for deterministic compression.
+    """
+    return compress_text(text)
+
+
+def check_alignment(core, residue):
+    """
+    Backwards-compatible alignment helper for callers that pass the full core.
+    """
+    core_sig = core["signature"] if isinstance(core, dict) else core
+    return alignment_report(core_sig, residue)
+
+
 # ------------------------------------------------------------
 # Full Pipeline
 # ------------------------------------------------------------
@@ -98,3 +113,10 @@ def run_pipeline(text):
         "alignment_report": alignment,
         "bounded_response": bounded_response
     }
+
+
+def run_full_pipeline(text):
+    """
+    Backwards-compatible alias for the benchmark pipeline.
+    """
+    return run_pipeline(text)

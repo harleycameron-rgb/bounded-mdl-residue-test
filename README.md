@@ -43,19 +43,39 @@ VALIDATION_SUITE/
 
 ---
 
-3. Execution
+3. Installation
+
+From a checkout:
+
+pip install .
+
+From PyPI (after publication):
+
+pip install mdl-residue-llm
+
+---
+
+4. Execution
 
 Python (CLI):
 python REFERENCE_IMPLEMENTATION/run_benchmark.py “your text here”
+
+Installed CLI:
+mdl-residue-llm "your text here"
 
 Python (Module Import):
 from REFERENCE_IMPLEMENTATION.run_benchmark import run_benchmark
 output = run_benchmark(“your text here”)
 print(output)
 
+Stable package import:
+from mdl_residue_llm import run_benchmark
+output = run_benchmark("your text here")
+print(output)
+
 ---
 
-4. Pipeline Architecture
+5. Pipeline Architecture
 
 4.1 Core Pipeline
 Deterministic compression, residue extraction, and alignment report.
@@ -80,7 +100,7 @@ Final composed MDL output block with unified hash.
 
 ---
 
-5. Determinism Guarantees
+6. Determinism Guarantees
 
 • Stable SHA-256 hashing
 • Prefix-based signatures
@@ -91,7 +111,7 @@ Final composed MDL output block with unified hash.
 
 ---
 
-6. Vendor Integration
+7. Vendor Integration
 
 Vendors integrate by calling:
 
@@ -101,15 +121,28 @@ The returned unified output block is submitted as the benchmark result.
 
 ---
 
-7. Versioning
+8. Publishing
+
+This repository includes Python packaging metadata in `pyproject.toml` and a
+GitHub Actions workflow at `.github/workflows/publish.yml`.
+
+Release flow:
+
+• build locally with `python -m build`
+• verify the `dist/` artifacts
+• push a version tag like `v1.0.0`
+• publish through the GitHub Actions workflow using PyPI trusted publishing
+
+---
+
+9. Versioning
 
 Current version: v1.0.0
 All modules in the reference layer are locked and deterministic.
 
 ---
 
-8. Contact
+10. Contact
 
 For MDL benchmark integration, specification details, or vendor onboarding, refer to the MDL documentation or your integration channel.
-
 

@@ -1,11 +1,16 @@
-#import json
 import os
+import sys
+import json
 from pathlib import Path
 
 # ------------------------------------------------------------
 # Validation Suite — Bounded Predictive‑MDL Residue Test v1.0.0
 # Deterministic scaffold
 # ------------------------------------------------------------
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 
 # Import reference implementation
 import REFERENCE_IMPLEMENTATION.core as impl
@@ -15,17 +20,17 @@ import REFERENCE_IMPLEMENTATION.core as impl
 # Load Test Vectors
 # ------------------------------------------------------------
 def load_test_vectors():
-    base = Path("TEST_VECTORS")
+    base = REPO_ROOT / "TEST_VECTORS"
     inputs_dir = base / "inputs"
-    metadata_file = base / "metadata.json"
+    metadata_file = base / "TEST_VECTORS" / "metadata.json"
 
-    with open(metadata_file, "r") as f:
+    with open(metadata_file, "r", encoding="utf-8") as f:
         metadata = json.load(f)
 
     vectors = []
     for entry in metadata["test_vectors"]:
         input_path = inputs_dir / f"{entry['input_id']}.txt"
-        with open(input_path, "r") as f:
+        with open(input_path, "r", encoding="utf-8") as f:
             text = f.read().strip()
 
         vectors.append({
@@ -161,4 +166,3 @@ def run_all_tests():
 if __name__ == "__main__":
     report = run_all_tests()
     print(json.dumps(report, indent=2))
-

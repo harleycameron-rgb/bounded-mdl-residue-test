@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mdl-residue-llm"
+version = "1.0.0"
+description = "Deterministic MDL residue benchmark for LLM stability, drift, and alignment analysis."
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{ name = "harleycameron-rgb" }]
+license = { text = "License not specified" }
+keywords = ["mdl", "llm", "benchmark", "drift", "residue", "alignment"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/harleycameron-rgb/bounded-mdl-residue-test"
+Repository = "https://github.com/harleycameron-rgb/bounded-mdl-residue-test"
+
+[project.scripts]
+mdl-residue-llm = "mdl_residue_llm.cli:main"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["REFERENCE_IMPLEMENTATION", "mdl_residue_llm"]

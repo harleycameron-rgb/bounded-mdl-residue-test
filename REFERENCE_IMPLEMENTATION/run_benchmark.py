@@ -3,13 +3,24 @@
 # Unified execution harness for full MDL pipeline
 # ------------------------------------------------------------
 
-from core import run_pipeline
-from drift import analyze_drift
-from bounded_response import run_harmonized
-from alignment_auditor import run_alignment_audit
-from stability_envelope import run_stability_envelope
-from predictive_mdl_score import run_mdl_score
-from unified_output import run_unified
+import json
+
+try:
+    from .core import run_pipeline
+    from .drift import analyze_drift
+    from .bounded_response import run_harmonized
+    from .alignment_auditor import run_alignment_audit
+    from .stability_envelope import run_stability_envelope
+    from .predictive_mdl_score import run_mdl_score
+    from .unified_output import run_unified
+except ImportError:  # pragma: no cover - script execution fallback
+    from core import run_pipeline
+    from drift import analyze_drift
+    from bounded_response import run_harmonized
+    from alignment_auditor import run_alignment_audit
+    from stability_envelope import run_stability_envelope
+    from predictive_mdl_score import run_mdl_score
+    from unified_output import run_unified
 
 # ------------------------------------------------------------
 # Unified Benchmark Runner
@@ -30,15 +41,17 @@ def run_benchmark(text):
     )
 
 
+def main(argv=None):
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Run the MDL residue benchmark.")
+    parser.add_argument("text", help="Input text to evaluate")
+    args = parser.parse_args(argv)
+    print(json.dumps(run_benchmark(args.text), indent=2))
+
+
 # ------------------------------------------------------------
 # Optional CLI Entry Point
 # ------------------------------------------------------------
 if __name__ == "__main__":
-    import sys
-    if len(sys.argv) < 2:
-        print("Usage: python run_benchmark.py \"your text here\"")
-        sys.exit(1)
-
-    text = sys.argv[1]
-    output = run_benchmark(text)
-    print(output)
+    main()
