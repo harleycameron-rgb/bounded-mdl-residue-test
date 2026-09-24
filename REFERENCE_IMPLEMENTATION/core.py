@@ -21,13 +21,15 @@ def stable_hash(obj):
 def compress_text(text):
     """
     Deterministic compression using zlib + SHA-256 signature.
+    The compressed payload is stored as hex so benchmark outputs remain
+    JSON-serializable.
     """
     raw = text.encode("utf-8")
     compressed = zlib.compress(raw)
     signature = hashlib.sha256(compressed).hexdigest()
 
     return {
-        "compressed_bytes": compressed,
+        "compressed_bytes": compressed.hex(),
         "signature": signature
     }
 
