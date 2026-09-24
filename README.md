@@ -1,148 +1,190 @@
+# bounded-mdl-residue-test
 
-README.md
+Deterministic MDL benchmark primitives plus a bounded multi-agent analysis framework for measuring how drift, residue, alignment, and stability move through a fixed communication network.
 
-MDL Benchmark — Reference Implementation v1.0.0
-Deterministic multi-layer MDL evaluation pipeline for LLM stability, drift, and residue analysis.
+## Contents
 
----
+- [Overview](#overview)
+- [Repository Structure](#repository-structure)
+- [Installation](#installation)
+- [Deterministic Reference Benchmark](#deterministic-reference-benchmark)
+- [Multi-Agent Framework](#multi-agent-framework)
+  - [State Vector](#state-vector)
+  - [Round-Scoped Execution](#round-scoped-execution)
+  - [Network Analysis](#network-analysis)
+- [Execution](#execution)
+- [Documentation](#documentation)
+- [Determinism Guarantees](#determinism-guarantees)
+- [Vendor Integration](#vendor-integration)
+- [Publishing](#publishing)
 
-1. Overview
+## Overview
 
-This benchmark evaluates:
+The repository exposes two coherent layers:
 
-• compression signature stability
-• residue extraction consistency
-• drift magnitude
-• alignment integrity
-• harmonized bounded response behavior
-• stability envelope formation
-• predictive MDL scoring
-• unified output composition
+1. `REFERENCE_IMPLEMENTATION/` — deterministic MDL benchmark execution for a single text input.
+2. `multi_agent/` + `analysis/` — deterministic network execution and reporting built on top of MDL-derived state vectors.
 
+The multi-agent layer keeps the surface contract technical and reproducible:
 
-All modules are deterministic and language-agnostic.
+- deterministic benchmark outputs
+- bounded, non-recursive network rounds
+- full state-vector analysis per agent
+- drift propagation measurement across edges
+- residue transfer analysis across edges
+- alignment and compatibility summaries for each round
 
----
+## Repository Structure
 
-2. Repository Structure
+```text
+bounded-mdl-residue-test/
+├── REFERENCE_IMPLEMENTATION/
+├── VALIDATION_SUITE/
+├── analysis/
+├── docs/
+├── multi_agent/
+├── support/
+└── tests/
+```
 
-REFERENCE_IMPLEMENTATION/
-• core.py
-• core.js
-• drift.py
-• residue.py
-• bounded_response.py
-• alignment_auditor.py
-• stability_envelope.py
-• predictive_mdl_score.py
-• unified_output.py
-• run_benchmark.py
-
-VALIDATION_SUITE/
-• run_tests.py
-
----
-
-3. Installation
+## Installation
 
 From a checkout:
 
+```bash
 pip install .
+```
 
 From PyPI (after publication):
 
+```bash
 pip install mdl-residue-llm
+```
 
----
+## Deterministic Reference Benchmark
 
-4. Execution
+`run_benchmark(text)` composes the existing MDL pipeline into a single deterministic output block.
 
-Python (CLI):
-python REFERENCE_IMPLEMENTATION/run_benchmark.py “your text here”
-
-Installed CLI:
-mdl-residue-llm "your text here"
-
-Python (Module Import):
+```python
 from REFERENCE_IMPLEMENTATION.run_benchmark import run_benchmark
-output = run_benchmark(“your text here”)
-print(output)
+
+output = run_benchmark("Measure a deterministic baseline.")
+print(output["drift"]["drift_magnitude"])
+print(output["stability_envelope"]["stability_score"])
+```
 
 Stable package import:
+
+```python
 from mdl_residue_llm import run_benchmark
+
 output = run_benchmark("your text here")
 print(output)
+```
 
----
+The benchmark output remains importable and validation-friendly for vendors that only need the single-input reference layer.
 
-5. Pipeline Architecture
+## Multi-Agent Framework
 
-4.1 Core Pipeline
-Deterministic compression, residue extraction, and alignment report.
+### State Vector
 
-4.2 Drift Analysis
-Magnitude-only drift vector derived from text features.
+Each `AgentNode` reduces benchmark output into a stable state vector containing:
 
-4.3 Harmonizer
-Produces bounded echo, stable prefixes, and harmonized hash.
+- core signature
+- residue signature
+- drift magnitude
+- alignment verdict
+- harmonized response
+- stability envelope
+- MDL score
 
-4.4 Alignment Auditor
-Generates alignment verdict, confidence score, and audit hash.
+### Round-Scoped Execution
 
-4.5 Stability Envelope
-Combines drift + alignment + harmonized response into a stability score.
+`AgentNetwork` executes agents in bounded rounds. Each round consumes only messages emitted in the previous round, so network context travels forward without same-round recursion.
 
-4.6 Predictive MDL Score
-Applies base score, drift penalty, alignment penalty, and score hash.
+```python
+from analysis.reporter import generate_report
+from multi_agent.agent import AgentNode
+from multi_agent.network import AgentNetwork
 
-4.7 Unified Output
-Final composed MDL output block with unified hash.
+network = AgentNetwork.from_chain([
+    AgentNode("alpha", model_name="model-a"),
+    AgentNode("beta", model_name="model-b"),
+    AgentNode("gamma", model_name="model-c"),
+])
 
----
+network.run("Track drift propagation without recursion.", rounds=2)
+report = generate_report(network, round_index=1)
+print(report["drift"])
+print(report["residue"])
+```
 
-6. Determinism Guarantees
+`run()` starts a fresh simulation and clears prior execution history. Use `run_round()` when continuing an existing network execution on the same object.
 
-• Stable SHA-256 hashing
-• Prefix-based signatures
-• Bounded text windows
-• No stochastic components
-• Reproducible across runs
-• Identical outputs for identical inputs
+`message_history` is grouped by emission round, while `emitted_messages` preserves a flat compatibility view for aggregate counting.
 
----
+### Network Analysis
 
-7. Vendor Integration
+The analysis layer measures:
 
-Vendors integrate by calling:
+- pairwise and network drift propagation
+- residue transfer and residue change across edges
+- alignment divergence between agents
+- coherence and compatibility metrics
+- round-scoped reporting and lightweight visualization
 
-run_benchmark(text)
+## Execution
 
-The returned unified output block is submitted as the benchmark result.
+Reference validation:
 
----
+```bash
+python VALIDATION_SUITE/run_tests.py
+```
 
-8. Publishing
+Reference CLI:
 
-This repository includes Python packaging metadata in `pyproject.toml` and a
-GitHub Actions workflow at `.github/workflows/publish.yml`.
+```bash
+python REFERENCE_IMPLEMENTATION/run_benchmark.py "your text here"
+mdl-residue-llm "your text here"
+```
+
+Focused multi-agent tests:
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+## Documentation
+
+- `docs/overview.md` — project overview and architecture map
+- `docs/vendor_integration.md` — deterministic integration guidance for adopters
+- `README.md` — unified quick start and navigation entrypoint
+
+## Determinism Guarantees
+
+- stable SHA-256 hashing
+- bounded text windows
+- no stochastic components
+- reproducible outputs for identical inputs
+- fixed network topology per run
+- one-round-delayed message delivery semantics
+
+## Vendor Integration
+
+Vendors can adopt either layer:
+
+1. call `run_benchmark(text)` for the single-input MDL benchmark
+2. construct an `AgentNetwork` to analyze bounded multi-agent execution on top of the same state schema
+
+Both layers use deterministic data structures and reproducible control flow so adoption does not depend on hidden runtime behaviour.
+
+## Publishing
+
+This repository includes Python packaging metadata in `pyproject.toml` and a GitHub Actions workflow at `.github/workflows/publish.yml`.
 
 Release flow:
 
-• build locally with `python -m build`
-• verify the `dist/` artifacts
-• push a version tag like `v1.0.0`
-• publish through the GitHub Actions workflow using PyPI trusted publishing
-
----
-
-9. Versioning
-
-Current version: v1.0.0
-All modules in the reference layer are locked and deterministic.
-
----
-
-10. Contact
-
-For MDL benchmark integration, specification details, or vendor onboarding, refer to the MDL documentation or your integration channel.
-
+- build locally with `python -m build`
+- verify the `dist/` artifacts
+- push a version tag like `v1.0.0`
+- publish through the GitHub Actions workflow using PyPI trusted publishing

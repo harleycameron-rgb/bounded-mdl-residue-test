@@ -41,8 +41,14 @@ def harmonize_response(pipeline_output):
 # ------------------------------------------------------------
 # Full Harmonized Pipeline Wrapper
 # ------------------------------------------------------------
-def run_harmonized(pipeline_output):
+def run_harmonized(pipeline_output, pipeline_fn=None):
     """
     Wrap the full MDL pipeline with harmonization.
     """
-    return harmonize_response(pipeline_output)
+    if isinstance(pipeline_output, dict):
+        raw = pipeline_output
+    elif pipeline_fn is not None:
+        raw = pipeline_fn(pipeline_output)
+    else:
+        raise TypeError("run_harmonized expects a pipeline output dictionary or a pipeline function")
+    return harmonize_response(raw)

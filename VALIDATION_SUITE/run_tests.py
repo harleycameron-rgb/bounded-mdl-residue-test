@@ -1,6 +1,5 @@
-import os
-import sys
 import json
+import sys
 from pathlib import Path
 
 # ------------------------------------------------------------
@@ -22,7 +21,9 @@ import REFERENCE_IMPLEMENTATION.core as impl
 def load_test_vectors():
     base = REPO_ROOT / "TEST_VECTORS"
     inputs_dir = base / "inputs"
-    metadata_file = base / "TEST_VECTORS" / "metadata.json"
+    metadata_file = base / "metadata.json"
+    if not metadata_file.exists():
+        metadata_file = base / "TEST_VECTORS" / "metadata.json"
 
     with open(metadata_file, "r", encoding="utf-8") as f:
         metadata = json.load(f)
@@ -37,7 +38,7 @@ def load_test_vectors():
             "id": entry["input_id"],
             "category": entry["category"],
             "text": text,
-            "meta": entry
+            "meta": entry,
         })
 
     return vectors
@@ -54,7 +55,7 @@ def run_compression_tests():
         core = impl.compress(v["text"])
         results.append({
             "id": v["id"],
-            "compressed_core": core
+            "compressed_core": core,
         })
 
     return results
@@ -72,7 +73,7 @@ def run_residue_tests():
         residue = impl.extract_residue(v["text"], core)
         results.append({
             "id": v["id"],
-            "residue_signature": residue
+            "residue_signature": residue,
         })
 
     return results
@@ -91,7 +92,7 @@ def run_alignment_tests():
         alignment = impl.check_alignment(core, residue)
         results.append({
             "id": v["id"],
-            "alignment_report": alignment
+            "alignment_report": alignment,
         })
 
     return results
@@ -114,7 +115,7 @@ def run_drift_tests():
             "id": v["id"],
             "drift_detected": drift_detected,
             "first_run": first,
-            "second_run": second
+            "second_run": second,
         })
 
     return results
@@ -131,7 +132,7 @@ def run_format_tests():
         "compressed_core",
         "residue_signature",
         "alignment_report",
-        "bounded_response"
+        "bounded_response",
     }
 
     for v in vectors:
@@ -141,7 +142,7 @@ def run_format_tests():
         results.append({
             "id": v["id"],
             "missing_keys": list(missing),
-            "format_valid": len(missing) == 0
+            "format_valid": len(missing) == 0,
         })
 
     return results
@@ -156,7 +157,7 @@ def run_all_tests():
         "residue": run_residue_tests(),
         "alignment": run_alignment_tests(),
         "drift": run_drift_tests(),
-        "format": run_format_tests()
+        "format": run_format_tests(),
     }
 
 
@@ -165,4 +166,10 @@ def run_all_tests():
 # ------------------------------------------------------------
 if __name__ == "__main__":
     report = run_all_tests()
-    print(json.dumps(report, indent=2))
+    print(
+        json.dumps(
+            report,
+            indent=2,
+            default=lambda value: value.hex() if isinstance(value, (bytes, bytearray)) else str(value),
+        )
+    )
