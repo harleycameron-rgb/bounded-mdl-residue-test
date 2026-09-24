@@ -1,16 +1,15 @@
 import json
 import sys
-import os
 from pathlib import Path
-
-ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
 
 # ------------------------------------------------------------
 # Validation Suite — Bounded Predictive‑MDL Residue Test v1.0.0
 # Deterministic scaffold
 # ------------------------------------------------------------
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 
 # Import reference implementation
 import REFERENCE_IMPLEMENTATION.core as impl
@@ -20,26 +19,26 @@ import REFERENCE_IMPLEMENTATION.core as impl
 # Load Test Vectors
 # ------------------------------------------------------------
 def load_test_vectors():
-    base = ROOT / "TEST_VECTORS"
+    base = REPO_ROOT / "TEST_VECTORS"
     inputs_dir = base / "inputs"
     metadata_file = base / "metadata.json"
     if not metadata_file.exists():
         metadata_file = base / "TEST_VECTORS" / "metadata.json"
 
-    with open(metadata_file, "r") as f:
+    with open(metadata_file, "r", encoding="utf-8") as f:
         metadata = json.load(f)
 
     vectors = []
     for entry in metadata["test_vectors"]:
         input_path = inputs_dir / f"{entry['input_id']}.txt"
-        with open(input_path, "r") as f:
+        with open(input_path, "r", encoding="utf-8") as f:
             text = f.read().strip()
 
         vectors.append({
             "id": entry["input_id"],
             "category": entry["category"],
             "text": text,
-            "meta": entry
+            "meta": entry,
         })
 
     return vectors
@@ -56,7 +55,7 @@ def run_compression_tests():
         core = impl.compress(v["text"])
         results.append({
             "id": v["id"],
-            "compressed_core": core
+            "compressed_core": core,
         })
 
     return results
@@ -74,7 +73,7 @@ def run_residue_tests():
         residue = impl.extract_residue(v["text"], core)
         results.append({
             "id": v["id"],
-            "residue_signature": residue
+            "residue_signature": residue,
         })
 
     return results
@@ -93,7 +92,7 @@ def run_alignment_tests():
         alignment = impl.check_alignment(core, residue)
         results.append({
             "id": v["id"],
-            "alignment_report": alignment
+            "alignment_report": alignment,
         })
 
     return results
@@ -116,7 +115,7 @@ def run_drift_tests():
             "id": v["id"],
             "drift_detected": drift_detected,
             "first_run": first,
-            "second_run": second
+            "second_run": second,
         })
 
     return results
@@ -133,7 +132,7 @@ def run_format_tests():
         "compressed_core",
         "residue_signature",
         "alignment_report",
-        "bounded_response"
+        "bounded_response",
     }
 
     for v in vectors:
@@ -143,7 +142,7 @@ def run_format_tests():
         results.append({
             "id": v["id"],
             "missing_keys": list(missing),
-            "format_valid": len(missing) == 0
+            "format_valid": len(missing) == 0,
         })
 
     return results
@@ -158,7 +157,7 @@ def run_all_tests():
         "residue": run_residue_tests(),
         "alignment": run_alignment_tests(),
         "drift": run_drift_tests(),
-        "format": run_format_tests()
+        "format": run_format_tests(),
     }
 
 

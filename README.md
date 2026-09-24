@@ -6,6 +6,7 @@ Deterministic MDL benchmark primitives plus a bounded multi-agent analysis frame
 
 - [Overview](#overview)
 - [Repository Structure](#repository-structure)
+- [Installation](#installation)
 - [Deterministic Reference Benchmark](#deterministic-reference-benchmark)
 - [Multi-Agent Framework](#multi-agent-framework)
   - [State Vector](#state-vector)
@@ -15,6 +16,7 @@ Deterministic MDL benchmark primitives plus a bounded multi-agent analysis frame
 - [Documentation](#documentation)
 - [Determinism Guarantees](#determinism-guarantees)
 - [Vendor Integration](#vendor-integration)
+- [Publishing](#publishing)
 
 ## Overview
 
@@ -45,6 +47,20 @@ bounded-mdl-residue-test/
 └── tests/
 ```
 
+## Installation
+
+From a checkout:
+
+```bash
+pip install .
+```
+
+From PyPI (after publication):
+
+```bash
+pip install mdl-residue-llm
+```
+
 ## Deterministic Reference Benchmark
 
 `run_benchmark(text)` composes the existing MDL pipeline into a single deterministic output block.
@@ -55,6 +71,15 @@ from REFERENCE_IMPLEMENTATION.run_benchmark import run_benchmark
 output = run_benchmark("Measure a deterministic baseline.")
 print(output["drift"]["drift_magnitude"])
 print(output["stability_envelope"]["stability_score"])
+```
+
+Stable package import:
+
+```python
+from mdl_residue_llm import run_benchmark
+
+output = run_benchmark("your text here")
+print(output)
 ```
 
 The benchmark output remains importable and validation-friendly for vendors that only need the single-input reference layer.
@@ -116,6 +141,13 @@ Reference validation:
 python VALIDATION_SUITE/run_tests.py
 ```
 
+Reference CLI:
+
+```bash
+python REFERENCE_IMPLEMENTATION/run_benchmark.py "your text here"
+mdl-residue-llm "your text here"
+```
+
 Focused multi-agent tests:
 
 ```bash
@@ -145,3 +177,14 @@ Vendors can adopt either layer:
 2. construct an `AgentNetwork` to analyze bounded multi-agent execution on top of the same state schema
 
 Both layers use deterministic data structures and reproducible control flow so adoption does not depend on hidden runtime behaviour.
+
+## Publishing
+
+This repository includes Python packaging metadata in `pyproject.toml` and a GitHub Actions workflow at `.github/workflows/publish.yml`.
+
+Release flow:
+
+- build locally with `python -m build`
+- verify the `dist/` artifacts
+- push a version tag like `v1.0.0`
+- publish through the GitHub Actions workflow using PyPI trusted publishing

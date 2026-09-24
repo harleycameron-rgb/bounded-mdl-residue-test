@@ -6,13 +6,14 @@ from .core import (
     run_full_pipeline,
     run_pipeline,
 )
-from .run_benchmark import run_benchmark
+from .run_benchmark import main, run_benchmark
 
 __all__ = [
     "check_alignment",
     "compress",
     "compress_text",
     "extract_residue",
+    "main",
     "run_benchmark",
     "run_full_pipeline",
     "run_pipeline",
