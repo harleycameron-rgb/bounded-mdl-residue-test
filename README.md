@@ -192,6 +192,7 @@ Release flow:
 - build locally with `python -m build`
 - verify the `dist/` artifacts
 - enable the repository in Zenodo so GitHub releases are archived from the `.zenodo.json` metadata
+- protect the `github-release` environment before publishing so tagged releases require the repository's release policy
 - push a version tag like `v1.0.0`
 - let the GitHub Actions workflow publish to PyPI and create a GitHub release containing the `dist/` artifacts
 - confirm the tagged GitHub release appears in Zenodo with its minted DOI
