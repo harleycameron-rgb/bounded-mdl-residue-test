@@ -180,11 +180,18 @@ Both layers use deterministic data structures and reproducible control flow so a
 
 ## Publishing
 
-This repository includes Python packaging metadata in `pyproject.toml` and a GitHub Actions workflow at `.github/workflows/publish.yml`.
+This repository includes Python packaging metadata in `pyproject.toml`, Zenodo release metadata in `.zenodo.json`, and a GitHub Actions workflow at `.github/workflows/publish.yml`.
+
+Zenodo DOI status:
+
+- pending first archived release
+- after the first Zenodo archive is minted, replace this placeholder with the DOI badge/link for the latest deposit
 
 Release flow:
 
 - build locally with `python -m build`
 - verify the `dist/` artifacts
+- enable the repository in Zenodo so GitHub releases are archived from the `.zenodo.json` metadata
 - push a version tag like `v1.0.0`
-- publish through the GitHub Actions workflow using PyPI trusted publishing
+- let the GitHub Actions workflow publish to PyPI and create a GitHub release containing the `dist/` artifacts
+- confirm the tagged GitHub release appears in Zenodo with its minted DOI
