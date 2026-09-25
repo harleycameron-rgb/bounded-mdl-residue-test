@@ -186,6 +186,7 @@ Zenodo DOI status:
 
 - pending first archived release
 - after the first Zenodo archive is minted, replace this placeholder with the DOI badge/link for the latest deposit
+- if the repository owner wants a different citation name in Zenodo, update `.zenodo.json` before the first archived release
 
 Release flow:
 
