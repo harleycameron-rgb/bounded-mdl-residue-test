@@ -16,9 +16,8 @@ def _resolve_round_index(round_index: int, total_rounds: int) -> int:
     return resolved
 
 
-def _scope_records(records, round_index: int, total_rounds: int):
-    resolved_round = _resolve_round_index(round_index, total_rounds)
-    return [record for record in records if record["delivery_round"] == resolved_round]
+def _scope_records(records, resolved_round: int):
+    return [record for record in records if record.get("delivery_round") == resolved_round]
 
 
 def generate_report(network: AgentNetwork, round_index: int = -1) -> Dict[str, object]:
@@ -32,7 +31,8 @@ def generate_report(network: AgentNetwork, round_index: int = -1) -> Dict[str, o
             "residue": [],
         }
 
-    snapshots = network.round_history[round_index]
+    resolved_round = _resolve_round_index(round_index, len(network.round_history))
+    snapshots = network.round_history[resolved_round]
     states = snapshots_to_states(snapshots)
     drift_records = analyze_drift_network(network)
     residue_records = analyze_residue_network(network)
@@ -41,6 +41,6 @@ def generate_report(network: AgentNetwork, round_index: int = -1) -> Dict[str, o
         "rounds": len(network.round_history),
         "metrics": summarize(states),
         "alignment": detect_divergence(states),
-        "drift": _scope_records(drift_records, round_index, len(network.round_history)),
-        "residue": _scope_records(residue_records, round_index, len(network.round_history)),
+        "drift": _scope_records(drift_records, resolved_round),
+        "residue": _scope_records(residue_records, resolved_round),
     }

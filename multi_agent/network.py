@@ -17,7 +17,8 @@ class AgentNetwork:
         self.agents: "OrderedDict[str, AgentNode]" = OrderedDict()
         self.edges: Dict[str, List[str]] = defaultdict(list)
         self.round_history: List[Dict[str, AgentSnapshot]] = []
-        self.message_history: List[MessageEnvelope] = []
+        self.message_history: List[List[MessageEnvelope]] = []
+        self.emitted_messages: List[MessageEnvelope] = []
         self.messages_by_delivery_round: Dict[int, List[MessageEnvelope]] = defaultdict(list)
 
     def add_agent(self, agent: AgentNode) -> None:
@@ -27,6 +28,7 @@ class AgentNetwork:
     def reset(self) -> None:
         self.round_history.clear()
         self.message_history.clear()
+        self.emitted_messages.clear()
         self.messages_by_delivery_round.clear()
         for agent in self.agents.values():
             agent.history.clear()
@@ -53,15 +55,24 @@ class AgentNetwork:
             composed_prompt = build_prompt(prompt, inbound)
             snapshots[agent_name] = agent.process(composed_prompt, round_index)
 
+        round_messages: List[MessageEnvelope] = []
         for source, targets in self.edges.items():
             outbound = emit_messages(snapshots[source], targets, delivery_round=round_index + 1)
-            self.message_history.extend(outbound)
+            round_messages.extend(outbound)
+            self.emitted_messages.extend(outbound)
             self.messages_by_delivery_round[round_index + 1].extend(outbound)
 
+        self.message_history.append(round_messages)
         self.round_history.append(snapshots)
         return snapshots
 
     def run(self, prompt: str, rounds: int = 1) -> List[Dict[str, AgentSnapshot]]:
+        """
+        Start a fresh bounded simulation for the requested number of rounds.
+        Use run_round() directly to continue an existing execution without reset.
+        """
+        if rounds < 0:
+            raise ValueError("rounds must be non-negative")
         self.reset()
         return [self.run_round(prompt) for _ in range(rounds)]
 
@@ -90,9 +101,14 @@ class AgentNetwork:
         children: Dict[str, Sequence[AgentNode]],
     ) -> "AgentNetwork":
         all_agents = {root.name: root}
-        edges = []
-        for parent, child_agents in children.items():
+        for child_agents in children.values():
             for child in child_agents:
                 all_agents[child.name] = child
+
+        edges = []
+        for parent, child_agents in children.items():
+            if parent not in all_agents:
+                raise KeyError(f"Parent {parent!r} must be provided as the root or as a child agent")
+            for child in child_agents:
                 edges.append((parent, child.name))
         return cls.from_graph(all_agents.values(), edges)

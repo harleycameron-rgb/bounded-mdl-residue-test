@@ -21,13 +21,15 @@ def stable_hash(obj):
 def compress_text(text):
     """
     Deterministic compression using zlib + SHA-256 signature.
+    The compressed payload is stored as hex so benchmark outputs remain
+    JSON-serializable.
     """
     raw = text.encode("utf-8")
     compressed = zlib.compress(raw)
     signature = hashlib.sha256(compressed).hexdigest()
 
     return {
-        "compressed_bytes": compressed,
+        "compressed_bytes": compressed.hex(),
         "signature": signature
     }
 
@@ -71,6 +73,21 @@ def alignment_report(core_sig, residue_sig):
     }
 
 
+def compress(text):
+    """
+    Backwards-compatible alias for deterministic compression.
+    """
+    return compress_text(text)
+
+
+def check_alignment(core, residue):
+    """
+    Backwards-compatible alignment helper for callers that pass the full core.
+    """
+    core_sig = core["signature"] if isinstance(core, dict) else core
+    return alignment_report(core_sig, residue)
+
+
 # ------------------------------------------------------------
 # Full Pipeline
 # ------------------------------------------------------------
@@ -100,22 +117,8 @@ def run_pipeline(text):
     }
 
 
-def compress(text):
-    """
-    Compatibility wrapper used by the validation suite.
-    """
-    return compress_text(text)["signature"]
-
-
-def check_alignment(core_sig, residue_sig):
-    """
-    Compatibility wrapper used by the validation suite.
-    """
-    return alignment_report(core_sig, residue_sig)
-
-
 def run_full_pipeline(text):
     """
-    Compatibility wrapper used by the validation suite.
+    Backwards-compatible alias for the benchmark pipeline.
     """
     return run_pipeline(text)

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
 from typing import Iterable, List
 
@@ -22,7 +23,7 @@ def build_prompt(base_prompt: str, inbound_messages: Iterable[MessageEnvelope]) 
         return base_prompt
 
     context = "\n".join(
-        f"{message.source}->{message.target}: {message.response[:120]}"
+        f"{message.source}->{message.target}: {json.dumps(message.response[:120])}"
         for message in messages
     )
     return f"{base_prompt}\n\n[network_context]\n{context}"

@@ -21,7 +21,7 @@ def compose_unified_output(
     alignment_verdict,
     harmonized_response,
     stability_envelope,
-    mdl_score
+    mdl_score,
 ):
     """
     Produce a deterministic unified MDL output block.
@@ -36,7 +36,6 @@ def compose_unified_output(
         "mdl_score": mdl_score,
     }
 
-    # deterministic unified hash
     unified["unified_hash"] = prefix_hash(
         harmonized_response["core_sig_prefix"]
         + harmonized_response["residue_prefix"]
@@ -56,25 +55,26 @@ def run_unified(
     harmonizer_fn,
     audit_fn,
     envelope_fn,
-    score_fn
+    score_fn,
 ):
     """
     Execute the full MDL pipeline and produce unified output.
     """
 
     pipeline_output = pipeline_fn(text)
-    drift_analysis = drift_fn(pipeline_output, pipeline_output)
+    repeated_pipeline_output = pipeline_fn(text)
+    drift_analysis = drift_fn(pipeline_output, repeated_pipeline_output)
     harmonized = harmonizer_fn(pipeline_output)
     alignment_verdict = audit_fn(pipeline_output)
     stability_envelope = envelope_fn(
         drift_analysis,
         alignment_verdict,
-        harmonized
+        harmonized,
     )
     mdl_score = score_fn(
         stability_envelope,
         drift_analysis,
-        alignment_verdict
+        alignment_verdict,
     )
 
     return compose_unified_output(
@@ -83,5 +83,5 @@ def run_unified(
         alignment_verdict,
         harmonized,
         stability_envelope,
-        mdl_score
+        mdl_score,
     )

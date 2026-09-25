@@ -24,6 +24,27 @@ class AgentTests(unittest.TestCase):
         self.assertEqual(snapshot.response, "hello world")
         self.assertEqual(len(agent.history), 1)
 
+    def test_agent_prefers_bounded_response_echo(self):
+        agent = AgentNode(
+            "alpha",
+            evaluator=lambda prompt: {
+                **make_output(prompt),
+                "bounded_response": {
+                    "echo": "bounded",
+                    "core_sig": "core",
+                    "residue_prefix": "residue",
+                },
+                "harmonized": {
+                    **make_output(prompt)["harmonized"],
+                    "bounded_echo": "harmonized",
+                },
+            },
+        )
+
+        snapshot = agent.process("hello world", round_index=0)
+
+        self.assertEqual(snapshot.response, "bounded")
+
 
 if __name__ == "__main__":
     unittest.main()

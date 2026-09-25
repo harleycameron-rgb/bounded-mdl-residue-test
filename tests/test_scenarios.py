@@ -52,6 +52,26 @@ class ScenarioTests(unittest.TestCase):
         self.assertEqual(report["drift"][0]["delivery_round"], 1)
         self.assertEqual(report["residue"][0]["delivery_round"], 1)
 
+    def test_report_rejects_out_of_range_negative_round(self):
+        alpha = AgentNode("alpha", evaluator=lambda prompt: make_output(prompt))
+        beta = AgentNode("beta", evaluator=lambda prompt: make_output(prompt))
+        network = AgentNetwork.from_chain([alpha, beta])
+        network.run("bounded prompt", rounds=1)
+
+        with self.assertRaises(IndexError):
+            generate_report(network, round_index=-2)
+
+    def test_report_first_round_has_no_cross_round_records(self):
+        alpha = AgentNode("alpha", evaluator=lambda prompt: make_output(prompt, drift_magnitude=0))
+        beta = AgentNode("beta", evaluator=lambda prompt: make_output(prompt, drift_magnitude=2))
+        network = AgentNetwork.from_chain([alpha, beta])
+        network.run("scoped prompt", rounds=2)
+
+        report = generate_report(network, round_index=0)
+
+        self.assertEqual(report["drift"], [])
+        self.assertEqual(report["residue"], [])
+
 
 if __name__ == "__main__":
     unittest.main()

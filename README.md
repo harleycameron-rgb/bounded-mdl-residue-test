@@ -1,16 +1,94 @@
-
 # bounded-mdl-residue-test
 
-Deterministic MDL benchmark primitives plus a multi-agent communication analysis framework for studying how drift, residue, alignment, and stability propagate between LLM-like agents during live interaction.
+Deterministic MDL benchmark primitives plus a bounded multi-agent analysis framework for measuring how drift, residue, alignment, and stability move through a fixed communication network.
 
-## Project vision
+## Contents
 
-The repository now supports two layers:
+- [Overview](#overview)
+- [Repository Structure](#repository-structure)
+- [Installation](#installation)
+- [Deterministic Reference Benchmark](#deterministic-reference-benchmark)
+- [Multi-Agent Framework](#multi-agent-framework)
+  - [State Vector](#state-vector)
+  - [Round-Scoped Execution](#round-scoped-execution)
+  - [Network Analysis](#network-analysis)
+- [Execution](#execution)
+- [Documentation](#documentation)
+- [Determinism Guarantees](#determinism-guarantees)
+- [Vendor Integration](#vendor-integration)
+- [Publishing](#publishing)
 
-1. **Reference MDL benchmark modules** in `REFERENCE_IMPLEMENTATION/`
-2. **Multi-agent communication analysis** in `multi_agent/` and `analysis/`
+## Overview
 
-The multi-agent layer treats each model as a node with a state vector derived from the MDL output:
+The repository exposes two coherent layers:
+
+1. `REFERENCE_IMPLEMENTATION/` — deterministic MDL benchmark execution for a single text input.
+2. `multi_agent/` + `analysis/` — deterministic network execution and reporting built on top of MDL-derived state vectors.
+
+The multi-agent layer keeps the surface contract technical and reproducible:
+
+- deterministic benchmark outputs
+- bounded, non-recursive network rounds
+- full state-vector analysis per agent
+- drift propagation measurement across edges
+- residue transfer analysis across edges
+- alignment and compatibility summaries for each round
+
+## Repository Structure
+
+```text
+bounded-mdl-residue-test/
+├── REFERENCE_IMPLEMENTATION/
+├── VALIDATION_SUITE/
+├── analysis/
+├── docs/
+├── multi_agent/
+├── support/
+└── tests/
+```
+
+## Installation
+
+From a checkout:
+
+```bash
+pip install .
+```
+
+From PyPI (after publication):
+
+```bash
+pip install mdl-residue-llm
+```
+
+## Deterministic Reference Benchmark
+
+`run_benchmark(text)` composes the existing MDL pipeline into a single deterministic output block.
+
+```python
+from REFERENCE_IMPLEMENTATION.run_benchmark import run_benchmark
+
+output = run_benchmark("Measure a deterministic baseline.")
+print(output["drift"]["drift_magnitude"])
+print(output["stability_envelope"]["stability_score"])
+```
+
+Stable package import:
+
+```python
+from mdl_residue_llm import run_benchmark
+
+output = run_benchmark("your text here")
+print(output)
+```
+
+The benchmark output remains importable and validation-friendly for vendors that only need the single-input reference layer.
+
+## Multi-Agent Framework
+
+### State Vector
+
+Each `AgentNode` reduces benchmark output into a stable state vector containing:
 
 - core signature
 - residue signature
@@ -20,85 +98,9 @@ The multi-agent layer treats each model as a node with a state vector derived fr
 - stability envelope
 - MDL score
 
-This enables research into:
+### Round-Scoped Execution
 
-- cross-model drift propagation
-- residue transfer dynamics
-- alignment divergence across agents
-- stability envelope compatibility
-- harmonized response coherence
-- drift amplification or dampening in a network
-
-## Repository structure
-
-```text
-bounded-mdl-residue-test/
-├── REFERENCE_IMPLEMENTATION/
-├── VALIDATION_SUITE/
-├── analysis/
-├── examples/
-├── multi_agent/
-├── tests/
-├── README.md
-├── requirements.txt
-└── setup.py
-```
-
-## Reference benchmark usage
-
-```python
-from REFERENCE_IMPLEMENTATION.run_benchmark import run_benchmark
-
-output = run_benchmark("Measure a deterministic baseline.")
-print(output["drift"]["drift_magnitude"])  # 0 for identical baseline comparison
-```
-
-The reference benchmark remains deterministic:
-
-- stable SHA-256 hashing
-- bounded text windows
-- no stochastic components
-- reproducible output for identical input
-
-## Multi-agent framework
-
-### Core components
-
-- `multi_agent.agent` — agent node with per-round state tracking
-- `multi_agent.communication` — prompt composition and message envelopes
-- `multi_agent.network` — chain, tree, and graph topologies with non-recursive rounds
-- `multi_agent.drift_propagation` — pairwise and network drift spread analysis
-- `multi_agent.residue_transfer` — residue change and amplification/dampening tracking
-- `multi_agent.alignment_analyzer` — disagreement and divergence detection
-- `multi_agent.metrics` — coherence and compatibility scoring
-- `analysis.reporter` — aggregate report generation
-- `analysis.visualizer` — lightweight text visualization
-
-### Non-recursive design
-
-The communication framework is intentionally bounded: each round only consumes messages emitted in the **previous** round. That prevents same-round feedback loops while still allowing drift propagation analysis over time.
-
-## Quick start
-
-### Validation suite
-
-```bash
-python VALIDATION_SUITE/run_tests.py
-```
-
-### Focused test suite
-
-```bash
-python -m unittest discover -s tests -v
-```
-
-### Example scenario
-
-```bash
-python -m examples.basic_multi_agent
-```
-
-## Example workflow
+`AgentNetwork` executes agents in bounded rounds. Each round consumes only messages emitted in the previous round, so network context travels forward without same-round recursion.
 
 ```python
 from analysis.reporter import generate_report
@@ -112,28 +114,77 @@ network = AgentNetwork.from_chain([
 ])
 
 network.run("Track drift propagation without recursion.", rounds=2)
-report = generate_report(network)
-print(report["metrics"])
-print(report["alignment"])
+report = generate_report(network, round_index=1)
+print(report["drift"])
+print(report["residue"])
 ```
 
-## Research methodology guide
+`run()` starts a fresh simulation and clears prior execution history. Use `run_round()` when continuing an existing network execution on the same object.
 
-1. Build a network topology with `AgentNetwork`
-2. Inject a shared prompt or scenario
-3. Execute bounded rounds of communication
-4. Compare state vectors across edges and rounds
-5. Inspect compatibility, coherence, drift, residue, and divergence reports
+`message_history` is grouped by emission round, while `emitted_messages` preserves a flat compatibility view for aggregate counting.
 
-Suggested scenarios:
+### Network Analysis
 
-- aligned peers with matching prompts
-- diverging agents with mismatched alignment outputs
-- cascading drift along a chain
-- tree fan-out for stability envelope compatibility
+The analysis layer measures:
 
-## Development notes
+- pairwise and network drift propagation
+- residue transfer and residue change across edges
+- alignment divergence between agents
+- coherence and compatibility metrics
+- round-scoped reporting and lightweight visualization
 
-- The project currently uses only the Python standard library.
-- `setup.py` is included for lightweight packaging.
-- Example scripts are deterministic demonstrations rather than live API integrations.
+## Execution
+
+Reference validation:
+
+```bash
+python VALIDATION_SUITE/run_tests.py
+```
+
+Reference CLI:
+
+```bash
+python REFERENCE_IMPLEMENTATION/run_benchmark.py "your text here"
+mdl-residue-llm "your text here"
+```
+
+Focused multi-agent tests:
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+## Documentation
+
+- `docs/overview.md` — project overview and architecture map
+- `docs/vendor_integration.md` — deterministic integration guidance for adopters
+- `README.md` — unified quick start and navigation entrypoint
+
+## Determinism Guarantees
+
+- stable SHA-256 hashing
+- bounded text windows
+- no stochastic components
+- reproducible outputs for identical inputs
+- fixed network topology per run
+- one-round-delayed message delivery semantics
+
+## Vendor Integration
+
+Vendors can adopt either layer:
+
+1. call `run_benchmark(text)` for the single-input MDL benchmark
+2. construct an `AgentNetwork` to analyze bounded multi-agent execution on top of the same state schema
+
+Both layers use deterministic data structures and reproducible control flow so adoption does not depend on hidden runtime behaviour.
+
+## Publishing
+
+This repository includes Python packaging metadata in `pyproject.toml` and a GitHub Actions workflow at `.github/workflows/publish.yml`.
+
+Release flow:
+
+- build locally with `python -m build`
+- verify the `dist/` artifacts
+- push a version tag like `v1.0.0`
+- publish through the GitHub Actions workflow using PyPI trusted publishing

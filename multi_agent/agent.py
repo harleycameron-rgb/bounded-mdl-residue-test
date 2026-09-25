@@ -63,7 +63,7 @@ class AgentNode:
         harmonized = state_vector["harmonized_response"]
         if not isinstance(harmonized, dict):
             harmonized = {}
-        response = harmonized.get("bounded_echo", output.get("bounded_response", {}).get("echo", ""))
+        response = output.get("bounded_response", {}).get("echo", harmonized.get("bounded_echo", ""))
         snapshot = AgentSnapshot(
             agent_name=self.name,
             model_name=self.model_name,

@@ -11,6 +11,7 @@ def track_pair(source: AgentSnapshot, target: AgentSnapshot) -> Dict[str, object
     source_residue = source.state_vector["residue_signature"]["hash_prefix"]
     target_residue = target.state_vector["residue_signature"]["hash_prefix"]
     drift_delta = float(target.state_vector["drift_magnitude"]) - float(source.state_vector["drift_magnitude"])
+    residue_change = 0.0 if source_residue == target_residue else 1.0
     return {
         "source": source.agent_name,
         "target": target.agent_name,
@@ -19,7 +20,8 @@ def track_pair(source: AgentSnapshot, target: AgentSnapshot) -> Dict[str, object
         "delivery_round": target.round_index,
         "source_residue": source_residue,
         "target_residue": target_residue,
-        "residue_changed": source_residue != target_residue,
+        "residue_change": residue_change,
+        "residue_changed": residue_change > 0.0,
         "drift_delta": drift_delta,
         "transfer_effect": classify_amplification(drift_delta),
     }
