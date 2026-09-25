@@ -1,7 +1,6 @@
 name: Publish Python package
 
 on:
-  workflow_dispatch:
   push:
     tags:
       - "v*"
