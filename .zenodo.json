@@ -1,0 +1,20 @@
+{
+  "title": "bounded-mdl-residue-test",
+  "description": "Deterministic MDL benchmark primitives and a bounded multi-agent analysis framework for measuring drift, residue, alignment, and stability in reproducible communication networks.",
+  "upload_type": "software",
+  "access_right": "open",
+  "creators": [
+    {
+      "name": "harleycameron-rgb"
+    }
+  ],
+  "keywords": [
+    "mdl",
+    "llm",
+    "benchmark",
+    "drift",
+    "residue",
+    "alignment",
+    "multi-agent"
+  ]
+}
