@@ -17,7 +17,7 @@ def _resolve_round_index(round_index: int, total_rounds: int) -> int:
 
 
 def _scope_records(records, resolved_round: int):
-    return [record for record in records if record.get("delivery_round") == resolved_round + 1]
+    return [record for record in records if record.get("delivery_round") == resolved_round]
 
 
 def generate_report(network: AgentNetwork, round_index: int = -1) -> Dict[str, object]:
